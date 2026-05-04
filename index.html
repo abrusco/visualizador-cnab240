@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Visualizador CNAB240</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="container">
+      <header class="header panel">
+        <div>
+          <p class="eyebrow">CNAB240 • Retorno BB</p>
+          <h1>Visualizador CNAB240</h1>
+        </div>
+        <label class="theme-picker">
+          <span class="field-label">Tema</span>
+          <select id="themeSelect">
+            <option value="profissional">Profissional</option>
+            <option value="claro">Claro</option>
+            <option value="colorido">Colorido</option>
+            <option value="escuro">Escuro</option>
+            <option value="moderno">Moderno</option>
+            <option value="grafite">Grafite</option>
+            <option value="aurora">Aurora</option>
+          </select>
+        </label>
+      </header>
+
+      <section class="panel import-panel">
+        <div class="panel-head">
+          <h2>Importação</h2>
+          <button id="toggleImportPanelBtn" type="button" class="btn btn-ghost icon-toggle" aria-label="Ocultar importação"></button>
+        </div>
+        <div id="importPanelContent">
+          <div class="file-row">
+            <label class="field-grow">
+              <span class="field-label">Arquivo de retorno</span>
+              <input id="fileInput" type="file" accept="*" />
+            </label>
+            <button id="clearBtn" type="button" class="btn btn-ghost">Limpar</button>
+          </div>
+          <div id="status" class="status">Selecione um arquivo CNAB240 para iniciar.</div>
+          <progress id="progressBar" value="0" max="100" hidden></progress>
+        </div>
+      </section>
+
+      <section class="panel summary-search-panel">
+        <div class="panel-head">
+          <h2>Resumo do arquivo e pesquisa</h2>
+          <button id="toggleSummaryPanelBtn" type="button" class="btn btn-ghost icon-toggle" aria-label="Ocultar painel de resumo e pesquisa"></button>
+        </div>
+        <div id="summaryPanelContent" class="grid-two">
+          <div class="section">
+            <h2>Resumo do arquivo</h2>
+            <dl id="summary" class="summary">
+              <div><dt>Empresa</dt><dd>-</dd></div>
+              <div><dt>Convênio</dt><dd>-</dd></div>
+              <div><dt>NSA</dt><dd>-</dd></div>
+              <div><dt>Total de pagamentos</dt><dd>0</dd></div>
+              <div><dt>Valor total</dt><dd>R$ 0,00</dd></div>
+            </dl>
+          </div>
+          <div class="section">
+            <h2>Pesquisa e filtros</h2>
+            <div class="filters">
+              <label>
+                <span class="field-label">Campo</span>
+                <select id="filterField">
+                  <option value="nome">Nome</option>
+                  <option value="cpf">CPF</option>
+                  <option value="registro">Registro</option>
+                  <option value="codRetorno">Cod. Retorno</option>
+                </select>
+              </label>
+              <label class="field-grow">
+                <span class="field-label">Pesquisar</span>
+                <input id="filterValue" type="text" placeholder="Digite para filtrar..." />
+              </label>
+              <label class="switch"><input id="onlyErrors" type="checkbox" /> Somente pendências (oculta 00/ZA)</label>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel results-panel">
+        <div class="table-actions">
+          <span id="resultInfo">0 resultados</span>
+          <button id="exportCsvBtn" type="button" class="btn" disabled>Exportar CSV filtrado</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th data-sort="lineNo">Linha</th>
+                <th data-sort="lote">Lote</th>
+                <th data-sort="registro">Registro</th>
+                <th data-sort="cpf">CPF</th>
+                <th data-sort="nome">Nome</th>
+                <th data-sort="valor" class="text-right">Valor</th>
+                <th data-sort="banco" class="text-right">Banco</th>
+                <th data-sort="agencia" class="text-right">Agencia</th>
+                <th data-sort="conta">Conta</th>
+                <th data-sort="dtPagamento">Data Pgto</th>
+                <th data-sort="codRetorno">Cod. Retorno</th>
+                <th data-sort="descRetorno">Descricao</th>
+              </tr>
+            </thead>
+            <tbody id="resultsBody"></tbody>
+          </table>
+        </div>
+        <div class="pager">
+          <button id="prevPageBtn" type="button" class="btn btn-ghost">Anterior</button>
+          <span id="pageInfo">Pagina 1 de 1</span>
+          <button id="nextPageBtn" type="button" class="btn btn-ghost">Próxima</button>
+          <label>
+            Itens/página
+            <select id="pageSize">
+              <option>50</option>
+              <option selected>100</option>
+              <option>250</option>
+              <option>500</option>
+            </select>
+          </label>
+        </div>
+      </section>
+    </main>
+    <div id="tooltip" class="custom-tooltip" hidden></div>
+
+    <div id="modalOverlay" class="modal-overlay" hidden>
+      <div class="modal-card">
+        <header class="modal-header">
+          <h3>Detalhes do Registro</h3>
+          <button id="closeModalBtn" class="btn btn-ghost">Fechar</button>
+        </header>
+        <div id="modalContent" class="modal-content"></div>
+      </div>
+    </div>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
