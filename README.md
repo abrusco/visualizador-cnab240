@@ -1,9 +1,9 @@
 # Visualizador CNAB240
 
-O **Visualizador CNAB240** é uma ferramenta leve, moderna e segura para visualização e navegação de arquivos de retorno bancário no padrão FEBRABAN CNAB240 (especificamente otimizado para o layout do Banco do Brasil).
+O **Visualizador CNAB240** é uma ferramenta visualização e navegação de arquivos bancários no padrão FEBRABAN CNAB240 (especificamente otimizado para o layout do Banco do Brasil mas também funciona para outros banco como Caixa (CEF) e Bradesco).
 
 ## 🚀 Objetivo
-Este projeto foi desenvolvido para facilitar a conferência de arquivos de retorno, transformando dados brutos e complexos em uma interface legível, organizada e navegável.
+Este projeto foi desenvolvido para facilitar a conferência dos arquivos de pagamento no formato CNAB240.
 
 ## 🔒 Segurança e Privacidade (Privacidade em Primeiro Lugar)
 **Sua segurança é nossa prioridade.** Por se tratar de dados sensíveis e financeiros:
