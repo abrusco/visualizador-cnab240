@@ -1,23 +1,21 @@
-# Visualizador CNAB240
+﻿# Visualizador CNAB240
 
-Ferramenta para visualização e navegação de arquivos no padrão FEBRABAN CNAB240. Compatível com o layout do Banco do Brasil e funcional para outros bancos (como Caixa e Bradesco).
+Aplicativo web estatico para visualizacao local de arquivos CNAB240.
 
-## Objetivo
-Facilitar a conferência de arquivos de pagamento no formato CNAB240.
+## Site publicado
 
-## Segurança e Privacidade
-- Processamento local no navegador
-- Funciona offline (não requer internet)
-- Nenhum dado é enviado para servidores
+https://abrusco.github.io/visualizador-cnab240/
 
-## Funcionalidades
-- Visualização em grid com ordenação e filtros
-- Detalhamento dos registros (Segmentos A, B e Z)
-- Conversão de códigos de erro para descrições
-- Suporte a tema claro e escuro
-- Exportação dos dados filtrados em CSV
+## Privacidade
 
-## Como usar
-1. Baixe os arquivos do repositório
-2. Mantenha os arquivos na mesma pasta (`index.html`, `styles.css`, `app.js`, `parser.worker.js`)
-3. Abra o arquivo `index.html` no navegador
+- O arquivo CNAB e processado no navegador do usuario.
+- Nenhum dado e enviado para servidor ou API externa.
+- Nao ha backend nem banco de dados.
+
+## Uso
+
+Abra o site, selecione ou arraste um arquivo CNAB240 e navegue pelos pagamentos, ocorrencias e detalhes dos Segmentos A/B.
+
+## Deploy
+
+O `index.html` publicado e a versao standalone do app, com CSS e JavaScript embutidos.

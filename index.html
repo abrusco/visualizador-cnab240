@@ -3,150 +3,2068 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Visualizador CNAB240 | Leitor de Retorno Bancário Offline</title>
-    <meta name="description" content="O melhor visualizador e navegador de arquivos CNAB240 (FEBRABAN/BB). Processe, visualize e explore retornos bancários com segurança 100% local e offline." />
-    <meta name="keywords" content="CNAB240, retorno bancário, visualizar CNAB, navegador CNAB240, processar retorno BB, FEBRABAN, leitor de arquivo retorno" />
-    <meta name="author" content="abrusco" />
-    
-    <!-- Open Graph / Social Media -->
-    <meta property="og:type" content="website" />
-    <meta property="og:title" content="Visualizador CNAB240 | Leitor de Retorno Bancário Offline" />
-    <meta property="og:description" content="Navegue pelo conteúdo de arquivos de pagamento CNAB240 com clareza e segurança total." />
-    <meta property="og:url" content="https://abrusco.github.io/visualizador-cnab240/" />
-    
-    <link rel="stylesheet" href="./styles.css" />
+    <meta
+      name="description"
+      content="Visualizador local de arquivos CNAB240 para remessa e retorno."
+    />
+    <title>CNAB240 Viewer Standalone</title>
+    <style>
+:root {
+  color-scheme: light;
+  --bg: #eef2f7;
+  --panel: #ffffff;
+  --panel-2: #f8fafc;
+  --text: #172033;
+  --muted: #667085;
+  --line: #d8dee8;
+  --line-soft: #edf1f6;
+  --primary: #0f766e;
+  --primary-2: #155e75;
+  --danger: #b42318;
+  --danger-bg: #fff1f0;
+  --ok: #067647;
+  --ok-bg: #ecfdf3;
+  --warn: #b54708;
+  --warn-bg: #fffaeb;
+  --shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
+  --radius: 8px;
+  font-family:
+    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #111827;
+  --panel: #182234;
+  --panel-2: #202b3d;
+  --text: #eef2f7;
+  --muted: #a9b4c6;
+  --line: #344156;
+  --line-soft: #273348;
+  --primary: #2dd4bf;
+  --primary-2: #7dd3fc;
+  --danger: #fca5a5;
+  --danger-bg: #3b1f24;
+  --ok: #86efac;
+  --ok-bg: #143527;
+  --warn: #fbbf24;
+  --warn-bg: #3c2d15;
+  --shadow: 0 18px 46px rgba(0, 0, 0, 0.24);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#app {
+  min-height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  letter-spacing: 0;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+button,
+select,
+.drop-zone {
+  border-radius: var(--radius);
+}
+
+button {
+  border: 1px solid var(--line);
+  background: var(--panel);
+  color: var(--text);
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.icon {
+  display: inline-grid;
+  width: 18px;
+  height: 18px;
+  place-items: center;
+  flex: 0 0 auto;
+}
+
+.icon svg,
+.icon-button svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.app-shell {
+  display: grid;
+  grid-template-columns: 288px minmax(0, 1fr) minmax(360px, 420px);
+  min-height: 100vh;
+}
+
+.sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  padding: 18px;
+  border-right: 1px solid var(--line);
+  background: var(--panel);
+  overflow-y: auto;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.brand-mark {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  border-radius: 8px;
+  background: linear-gradient(135deg, var(--primary), var(--primary-2));
+  color: white;
+  font-weight: 800;
+}
+
+.brand strong,
+.brand small {
+  display: block;
+}
+
+.brand small,
+.side-title,
+.muted,
+.topbar p,
+td small,
+.stat small,
+.eyebrow {
+  color: var(--muted);
+}
+
+.drop-zone {
+  display: grid;
+  gap: 8px;
+  place-items: center;
+  min-height: 156px;
+  padding: 18px;
+  border: 1px dashed var(--line);
+  background: var(--panel-2);
+  text-align: center;
+  cursor: pointer;
+}
+
+.drop-zone input {
+  display: none;
+}
+
+.drop-zone.dragging {
+  border-color: var(--primary);
+  box-shadow: inset 0 0 0 1px var(--primary);
+}
+
+.progress {
+  height: 8px;
+  margin: 14px 0;
+  border-radius: 99px;
+  background: var(--line-soft);
+  overflow: hidden;
+}
+
+.progress span {
+  display: block;
+  height: 100%;
+  background: var(--primary);
+}
+
+.nav {
+  display: grid;
+  gap: 8px;
+  margin: 18px 0;
+}
+
+.nav button,
+.ghost-button,
+.details-actions button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 42px;
+  padding: 0 12px;
+}
+
+.nav button {
+  border-color: transparent;
+  background: transparent;
+  text-align: left;
+}
+
+.nav button.active,
+.nav button:hover,
+.ghost-button:hover,
+.details-actions button:hover {
+  border-color: var(--line);
+  background: var(--panel-2);
+}
+
+.side-section {
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--panel-2);
+}
+
+.side-title {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.side-row,
+.summary-list div {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 8px 0;
+  border-top: 1px solid var(--line-soft);
+}
+
+.side-row:first-of-type,
+.summary-list div:first-child {
+  border-top: 0;
+}
+
+.ghost-button {
+  width: 100%;
+  margin-top: 14px;
+}
+
+.main {
+  min-width: 0;
+  padding: 22px;
+}
+
+.topbar {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 18px;
+}
+
+.topbar h1 {
+  margin: 3px 0 0;
+  font-size: 24px;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.eyebrow {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.stat,
+.info-card {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--panel);
+  box-shadow: var(--shadow);
+}
+
+.stat {
+  padding: 14px;
+}
+
+.stat span,
+.field-grid span,
+.summary-list span {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.stat strong {
+  display: block;
+  margin: 6px 0 2px;
+  font-size: 24px;
+}
+
+.toolbar {
+  display: grid;
+  grid-template-columns: minmax(240px, 1fr) auto auto auto;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 42px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--panel);
+}
+
+.search-box input {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--text);
+}
+
+select {
+  min-height: 42px;
+  padding: 0 10px;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  color: var(--text);
+}
+
+.icon-button {
+  display: inline-grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+}
+
+.table-shell {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--panel);
+  box-shadow: var(--shadow);
+  overflow: auto;
+}
+
+table {
+  width: 100%;
+  min-width: 1040px;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 12px;
+  border-bottom: 1px solid var(--line-soft);
+  text-align: left;
+  vertical-align: middle;
+}
+
+th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: var(--panel-2);
+  color: var(--muted);
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+td {
+  font-size: 14px;
+}
+
+td strong,
+td small {
+  display: block;
+}
+
+tbody tr {
+  cursor: pointer;
+}
+
+tbody tr:hover,
+tbody tr.selected {
+  background: color-mix(in srgb, var(--primary) 10%, transparent);
+}
+
+tbody tr.issue {
+  box-shadow: inset 3px 0 0 var(--warn);
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  max-width: 130px;
+  padding: 0 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.badge.ok {
+  background: var(--ok-bg);
+  color: var(--ok);
+}
+
+.badge.warn {
+  background: var(--warn-bg);
+  color: var(--warn);
+}
+
+.muted-cell {
+  color: var(--muted);
+  text-align: center;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 12px;
+  color: var(--muted);
+}
+
+.pagination div {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pagination button {
+  min-height: 36px;
+  padding: 0 12px;
+}
+
+.empty {
+  display: grid;
+  min-height: 360px;
+  place-items: center;
+  align-content: center;
+  gap: 10px;
+  border: 1px dashed var(--line);
+  border-radius: var(--radius);
+  background: var(--panel);
+  text-align: center;
+}
+
+.empty .icon {
+  width: 38px;
+  height: 38px;
+  color: var(--primary);
+}
+
+.empty h2 {
+  margin: 0;
+}
+
+.empty p {
+  max-width: 420px;
+  margin: 0;
+  color: var(--muted);
+}
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.info-card {
+  padding: 16px;
+}
+
+.info-card h3 {
+  margin: 0 0 12px;
+  font-size: 16px;
+}
+
+.field-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.field-grid div {
+  min-width: 0;
+  padding-top: 10px;
+  border-top: 1px solid var(--line-soft);
+}
+
+.field-grid strong {
+  display: block;
+  margin-top: 3px;
+  overflow-wrap: anywhere;
+}
+
+.warning-list {
+  display: grid;
+  gap: 8px;
+}
+
+.warning-list div {
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--warn-bg);
+  color: var(--warn);
+}
+
+.warning-list strong,
+.warning-list span {
+  display: block;
+}
+
+.details-panel {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  padding: 18px;
+  border-left: 1px solid var(--line);
+  background: var(--panel);
+  overflow-y: auto;
+}
+
+.details-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.details-header span {
+  color: var(--muted);
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.details-header strong {
+  display: block;
+  margin-top: 4px;
+  font-size: 18px;
+}
+
+.details-actions {
+  display: grid;
+  margin: 14px 0;
+}
+
+.summary-list {
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--panel-2);
+}
+
+.summary-list strong {
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+.occurrence-alert {
+  margin-top: 14px;
+  padding: 12px;
+  border: 1px solid color-mix(in srgb, var(--danger) 40%, var(--line));
+  border-left: 4px solid var(--danger);
+  border-radius: var(--radius);
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+
+.occurrence-alert span {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.occurrence-alert strong {
+  display: inline-flex;
+  min-height: 28px;
+  align-items: center;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: var(--danger);
+  color: white;
+  font-size: 14px;
+}
+
+.occurrence-alert p {
+  margin: 10px 0 0;
+  color: var(--text);
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.detail-record {
+  margin-top: 16px;
+}
+
+.detail-record h3 {
+  margin: 0 0 10px;
+  font-size: 14px;
+}
+
+.field-table {
+  display: grid;
+  gap: 8px;
+}
+
+.field-table div {
+  display: grid;
+  grid-template-columns: 54px minmax(110px, 0.8fr) minmax(0, 1fr);
+  gap: 8px;
+  align-items: start;
+  padding: 8px;
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius);
+}
+
+.field-table span {
+  color: var(--primary);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.field-table strong {
+  font-size: 12px;
+}
+
+.field-table em {
+  font-style: normal;
+  overflow-wrap: anywhere;
+}
+
+.field-table code {
+  grid-column: 1 / -1;
+  padding: 6px;
+  border-radius: 6px;
+  background: var(--panel-2);
+  color: var(--muted);
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
+details {
+  margin-top: 10px;
+}
+
+summary {
+  cursor: pointer;
+  color: var(--muted);
+}
+
+pre {
+  max-width: 100%;
+  padding: 10px;
+  border-radius: var(--radius);
+  background: var(--panel-2);
+  overflow: auto;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+@media (max-width: 1280px) {
+  .app-shell {
+    grid-template-columns: 260px minmax(0, 1fr);
+  }
+
+  .details-panel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    z-index: 5;
+    width: min(420px, 100vw);
+    box-shadow: var(--shadow);
+  }
+}
+
+@media (max-width: 900px) {
+  .app-shell {
+    display: block;
+  }
+
+  .sidebar {
+    position: static;
+    height: auto;
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .stats-grid,
+  .cards-grid,
+  .field-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .toolbar {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .search-box {
+    grid-column: 1 / -1;
+  }
+
+  .topbar {
+    display: block;
+  }
+}
+
+@media (max-width: 540px) {
+  .main,
+  .sidebar {
+    padding: 14px;
+  }
+
+  .toolbar {
+    grid-template-columns: 1fr;
+  }
+
+  .icon-button {
+    width: 100%;
+  }
+
+  .pagination {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .pagination div {
+    justify-content: space-between;
+  }
+}
+    </style>
   </head>
   <body>
-    <main class="container">
-      <header class="header panel">
-        <div>
-          <p class="eyebrow">CNAB240 • Retorno BB</p>
-          <h1>Visualizador CNAB240</h1>
-        </div>
-        <label class="theme-picker">
-          <span class="field-label">Tema</span>
-          <select id="themeSelect">
-            <option value="profissional">Profissional</option>
-            <option value="claro">Claro</option>
-            <option value="colorido">Colorido</option>
-            <option value="escuro">Escuro</option>
-            <option value="moderno">Moderno</option>
-            <option value="grafite">Grafite</option>
-            <option value="aurora">Aurora</option>
-          </select>
-        </label>
-      </header>
+    <div id="app"></div>
+    <script>
+(function () {
+  "use strict";
 
-      <section class="panel import-panel">
-        <div class="panel-head">
-          <h2>Importação</h2>
-          <button id="toggleImportPanelBtn" type="button" class="btn btn-ghost icon-toggle" aria-label="Ocultar importação"></button>
-        </div>
-        <div id="importPanelContent">
-          <div class="file-row">
-            <label class="field-grow">
-              <span class="field-label">Arquivo de retorno</span>
-              <input id="fileInput" type="file" accept="*" />
-            </label>
-            <button id="clearBtn" type="button" class="btn btn-ghost">Limpar</button>
-          </div>
-          <div id="status" class="status">Selecione um arquivo CNAB240 para iniciar.</div>
-          <progress id="progressBar" value="0" max="100" hidden></progress>
-        </div>
-      </section>
+/* src/models/cnabFields.js */
+const recordKinds = {
+  "0": "Header do arquivo",
+  "1": "Header de lote",
+  "3": "Detalhe",
+  "5": "Trailer de lote",
+  "9": "Trailer do arquivo",
+};
 
-      <section class="panel summary-search-panel">
-        <div class="panel-head">
-          <h2>Resumo do arquivo e pesquisa</h2>
-          <button id="toggleSummaryPanelBtn" type="button" class="btn btn-ghost icon-toggle" aria-label="Ocultar painel de resumo e pesquisa"></button>
-        </div>
-        <div id="summaryPanelContent" class="grid-two">
-          <div class="section">
-            <h2>Resumo do arquivo</h2>
-            <dl id="summary" class="summary">
-              <div><dt>Empresa</dt><dd>-</dd></div>
-              <div><dt>Convênio</dt><dd>-</dd></div>
-              <div><dt>NSA</dt><dd>-</dd></div>
-              <div><dt>Total de pagamentos</dt><dd>0</dd></div>
-              <div><dt>Valor total</dt><dd>R$ 0,00</dd></div>
-            </dl>
-          </div>
-          <div class="section">
-            <h2>Pesquisa e filtros</h2>
-            <div class="filters">
-              <label>
-                <span class="field-label">Campo</span>
-                <select id="filterField">
-                  <option value="nome">Nome</option>
-                  <option value="cpf">CPF</option>
-                  <option value="registro">Registro</option>
-                  <option value="codRetorno">Cod. Retorno</option>
-                </select>
-              </label>
-              <label class="field-grow">
-                <span class="field-label">Pesquisar</span>
-                <input id="filterValue" type="text" placeholder="Digite para filtrar..." />
-              </label>
-              <label class="switch"><input id="onlyErrors" type="checkbox" /> Somente pendências (oculta 00/ZA)</label>
-            </div>
-          </div>
-        </div>
-      </section>
+const segmentLabels = {
+  A: "Pagamento",
+  B: "Complemento do favorecido",
+};
 
-      <section class="panel results-panel">
-        <div class="table-actions">
-          <span id="resultInfo">0 resultados</span>
-          <button id="exportCsvBtn" type="button" class="btn" disabled>Exportar CSV filtrado</button>
-        </div>
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th data-sort="lineNo">Linha</th>
-                <th data-sort="lote">Lote</th>
-                <th data-sort="registro">Registro</th>
-                <th data-sort="cpf">CPF</th>
-                <th data-sort="nome">Nome</th>
-                <th data-sort="valor" class="text-right">Valor</th>
-                <th data-sort="banco" class="text-right">Banco</th>
-                <th data-sort="agencia" class="text-right">Agencia</th>
-                <th data-sort="conta">Conta</th>
-                <th data-sort="dtPagamento">Data Pgto</th>
-                <th data-sort="codRetorno">Cod. Retorno</th>
-                <th data-sort="descRetorno">Descricao</th>
-              </tr>
-            </thead>
-            <tbody id="resultsBody"></tbody>
-          </table>
-        </div>
-        <div class="pager">
-          <button id="prevPageBtn" type="button" class="btn btn-ghost">Anterior</button>
-          <span id="pageInfo">Pagina 1 de 1</span>
-          <button id="nextPageBtn" type="button" class="btn btn-ghost">Próxima</button>
-          <label>
-            Itens/página
-            <select id="pageSize">
-              <option>50</option>
-              <option selected>100</option>
-              <option>250</option>
-              <option>500</option>
-            </select>
-          </label>
-        </div>
-      </section>
-    </main>
-    <div id="tooltip" class="custom-tooltip" hidden></div>
+const movementTypes = {
+  "0": "Inclusao",
+  "3": "Baixa",
+  "5": "Alteracao",
+  "9": "Exclusao",
+};
 
-    <div id="modalOverlay" class="modal-overlay" hidden>
-      <div class="modal-card">
-        <header class="modal-header">
-          <h3>Detalhes do Registro</h3>
-          <button id="closeModalBtn" class="btn btn-ghost">Fechar</button>
-        </header>
-        <div id="modalContent" class="modal-content"></div>
+const paymentForms = {
+  "01": "Credito em conta corrente/salario",
+  "03": "DOC/TED",
+  "05": "Credito em poupanca",
+  "30": "Liquidacao de titulos",
+  "41": "TED outra titularidade",
+  "43": "TED mesma titularidade",
+  "45": "PIX transferencia",
+};
+
+const registrationTypes = {
+  "1": "CPF",
+  "2": "CNPJ",
+};
+
+const bankNames = {
+  "001": "Banco do Brasil",
+  "033": "Santander",
+  "077": "Inter",
+  "104": "Caixa",
+  "237": "Bradesco",
+  "341": "Itau",
+  "748": "Sicredi",
+  "756": "Sicoob",
+};
+
+
+/* src/utils/format.js */
+function onlyDigits(value) {
+  return String(value || "").replace(/\D/g, "");
+}
+
+function cleanText(value) {
+  return String(value || "").replace(/\s+/g, " ").trim();
+}
+
+function stripZeros(value) {
+  const cleaned = onlyDigits(value).replace(/^0+/, "");
+  return cleaned || "0";
+}
+
+function formatMoneyFromCents(raw) {
+  const digits = onlyDigits(raw);
+  if (!digits) return "";
+  const cents = Number.parseInt(digits, 10);
+  return new Intl.NumberFormat("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  }).format(cents / 100);
+}
+
+function centsToNumber(raw) {
+  const digits = onlyDigits(raw);
+  return digits ? Number.parseInt(digits, 10) / 100 : 0;
+}
+
+function formatDate(raw) {
+  const digits = onlyDigits(raw);
+  if (digits.length !== 8 || digits === "00000000") return "";
+  const day = digits.slice(0, 2);
+  const month = digits.slice(2, 4);
+  const year = digits.slice(4, 8);
+  return `${day}/${month}/${year}`;
+}
+
+function formatCpfCnpj(type, value) {
+  const digits = onlyDigits(value);
+  if (type === "1" && digits.length >= 11) {
+    const cpf = digits.slice(-11);
+    return cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
+  }
+  if (type === "2" && digits.length >= 14) {
+    const cnpj = digits.slice(-14);
+    return cnpj.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, "$1.$2.$3/$4-$5");
+  }
+  return stripZeros(digits);
+}
+
+function normalizeSearch(value) {
+  return String(value || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+}
+
+function downloadText(filename, content, mime = "text/plain;charset=utf-8") {
+  const blob = new Blob([content], { type: mime });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+  link.click();
+  URL.revokeObjectURL(url);
+}
+
+async function copyText(text) {
+  if (navigator.clipboard?.writeText) {
+    await navigator.clipboard.writeText(text);
+    return;
+  }
+
+  const area = document.createElement("textarea");
+  area.value = text;
+  area.setAttribute("readonly", "");
+  area.style.position = "fixed";
+  area.style.left = "-9999px";
+  document.body.appendChild(area);
+  area.select();
+  document.execCommand("copy");
+  area.remove();
+}
+
+function csvEscape(value) {
+  const text = String(value ?? "");
+  if (/[",\n;]/.test(text)) return `"${text.replace(/"/g, '""')}"`;
+  return text;
+}
+
+
+/* src/parser/layouts/bbCnab240.js */
+function slice(line, start, end) {
+  return line.slice(start - 1, end);
+}
+
+function field(label, start, end, raw, value = cleanText(raw)) {
+  return { label, start, end, raw, value };
+}
+
+function bankName(code) {
+  return bankNames[code] || `Banco ${code}`;
+}
+
+const bbCnab240Layout = {
+  id: "bb-cnab240",
+  name: "CNAB240 Banco do Brasil / FEBRABAN",
+
+  parseHeaderArquivo(line) {
+    const bank = slice(line, 1, 3);
+    const companyName = slice(line, 73, 102);
+    const fileDate = slice(line, 144, 151);
+    const fileTime = slice(line, 152, 157);
+    const sequence = slice(line, 158, 163);
+
+    return {
+      bank,
+      bankName: bankName(bank),
+      companyName: cleanText(companyName),
+      fileDate: formatDate(fileDate),
+      fileTime: fileTime.replace(/(\d{2})(\d{2})(\d{2})/, "$1:$2:$3"),
+      sequence: stripZeros(sequence),
+      fields: [
+        field("Banco", 1, 3, bank, `${bank} - ${bankName(bank)}`),
+        field("Tipo de registro", 8, 8, slice(line, 8, 8), "Header do arquivo"),
+        field("Nome da empresa", 73, 102, companyName),
+        field("Data de geracao", 144, 151, fileDate, formatDate(fileDate)),
+        field("Hora de geracao", 152, 157, fileTime),
+        field("Sequencia do arquivo", 158, 163, sequence, stripZeros(sequence)),
+      ],
+    };
+  },
+
+  parseHeaderLote(line) {
+    const bank = slice(line, 1, 3);
+    const lot = slice(line, 4, 7);
+    const serviceType = slice(line, 10, 11);
+    const paymentForm = slice(line, 12, 13);
+    const companyName = slice(line, 73, 102);
+    const address = slice(line, 143, 172);
+    const city = slice(line, 193, 212);
+    const state = slice(line, 221, 222);
+
+    return {
+      bank,
+      bankName: bankName(bank),
+      lot: stripZeros(lot),
+      serviceType,
+      paymentForm,
+      paymentFormLabel: paymentForms[paymentForm] || paymentForm,
+      companyName: cleanText(companyName),
+      city: cleanText(city),
+      state: cleanText(state),
+      fields: [
+        field("Banco", 1, 3, bank, `${bank} - ${bankName(bank)}`),
+        field("Lote", 4, 7, lot, stripZeros(lot)),
+        field("Tipo de servico", 10, 11, serviceType),
+        field("Forma de lancamento", 12, 13, paymentForm, paymentForms[paymentForm] || paymentForm),
+        field("Nome da empresa", 73, 102, companyName),
+        field("Endereco", 143, 172, address),
+        field("Cidade", 193, 212, city),
+        field("UF", 221, 222, state),
+      ],
+    };
+  },
+
+  parseTrailerLote(line) {
+    const lot = slice(line, 4, 7);
+    const records = slice(line, 18, 23);
+    const total = slice(line, 24, 41);
+    return {
+      lot: stripZeros(lot),
+      records: stripZeros(records),
+      totalValue: centsToNumber(total),
+      totalValueFormatted: formatMoneyFromCents(total),
+      fields: [
+        field("Lote", 4, 7, lot, stripZeros(lot)),
+        field("Quantidade de registros", 18, 23, records, stripZeros(records)),
+        field("Somatoria de valores", 24, 41, total, formatMoneyFromCents(total)),
+      ],
+    };
+  },
+
+  parseTrailerArquivo(line) {
+    const lots = slice(line, 18, 23);
+    const records = slice(line, 24, 29);
+    return {
+      lots: stripZeros(lots),
+      records: stripZeros(records),
+      fields: [
+        field("Quantidade de lotes", 18, 23, lots, stripZeros(lots)),
+        field("Quantidade de registros", 24, 29, records, stripZeros(records)),
+      ],
+    };
+  },
+
+  parseSegmentA(line, includeFields = true) {
+    const bank = slice(line, 1, 3);
+    const lot = slice(line, 4, 7);
+    const sequence = slice(line, 9, 13);
+    const movementType = slice(line, 15, 15);
+    const instructionCode = slice(line, 16, 17);
+    const favoredBank = slice(line, 21, 23);
+    const agency = slice(line, 24, 28);
+    const agencyDigit = slice(line, 29, 29);
+    const account = slice(line, 30, 41);
+    const accountDigit = slice(line, 42, 42);
+    const accountComboDigit = slice(line, 43, 43);
+    const name = slice(line, 44, 73);
+    const documentNumber = slice(line, 74, 93);
+    const paymentDate = slice(line, 94, 101);
+    const amount = slice(line, 120, 134);
+    const ourNumber = slice(line, 135, 154);
+    const effectiveDate = slice(line, 155, 162);
+    const effectiveAmount = slice(line, 163, 177);
+    const yourNumber = slice(line, 178, 197);
+    const occurrences = slice(line, 231, 240);
+
+    const parsed = {
+      segment: "A",
+      segmentLabel: segmentLabels.A,
+      lot: stripZeros(lot),
+      sequence: stripZeros(sequence),
+      bank,
+      favoredBank,
+      favoredBankName: bankName(favoredBank),
+      agency: stripZeros(agency),
+      agencyDigit: cleanText(agencyDigit),
+      account: stripZeros(account),
+      accountDigit: cleanText(accountDigit),
+      accountComboDigit: cleanText(accountComboDigit),
+      favoredName: cleanText(name),
+      documentNumber: cleanText(documentNumber),
+      ourNumber: cleanText(ourNumber),
+      yourNumber: cleanText(yourNumber),
+      amount: centsToNumber(amount),
+      amountFormatted: formatMoneyFromCents(amount),
+      effectiveAmount: centsToNumber(effectiveAmount),
+      effectiveAmountFormatted: formatMoneyFromCents(effectiveAmount),
+      paymentDate: formatDate(paymentDate),
+      effectiveDate: formatDate(effectiveDate),
+      movementType,
+      movementLabel: movementTypes[movementType] || movementType,
+      instructionCode,
+      occurrences: cleanText(occurrences),
+    };
+
+    if (includeFields) {
+      parsed.fields = [
+        field("Banco do arquivo", 1, 3, bank, `${bank} - ${bankName(bank)}`),
+        field("Lote", 4, 7, lot, stripZeros(lot)),
+        field("Sequencial", 9, 13, sequence, stripZeros(sequence)),
+        field("Segmento", 14, 14, "A", "A - Pagamento"),
+        field("Movimento", 15, 15, movementType, movementTypes[movementType] || movementType),
+        field("Instrucao", 16, 17, instructionCode),
+        field("Banco favorecido", 21, 23, favoredBank, `${favoredBank} - ${bankName(favoredBank)}`),
+        field("Agencia", 24, 28, agency, stripZeros(agency)),
+        field("DV agencia", 29, 29, agencyDigit),
+        field("Conta", 30, 41, account, stripZeros(account)),
+        field("DV conta", 42, 42, accountDigit),
+        field("DV ag/conta", 43, 43, accountComboDigit),
+        field("Nome favorecido", 44, 73, name),
+        field("Seu numero / documento", 74, 93, documentNumber),
+        field("Data de pagamento", 94, 101, paymentDate, formatDate(paymentDate)),
+        field("Valor", 120, 134, amount, formatMoneyFromCents(amount)),
+        field("Nosso numero", 135, 154, ourNumber),
+        field("Data efetiva", 155, 162, effectiveDate, formatDate(effectiveDate)),
+        field("Valor efetivo", 163, 177, effectiveAmount, formatMoneyFromCents(effectiveAmount)),
+        field("Informacao / seu numero", 178, 197, yourNumber),
+        field("Ocorrencias", 231, 240, occurrences),
+      ];
+    }
+
+    return parsed;
+  },
+
+  parseSegmentB(line, includeFields = true) {
+    const lot = slice(line, 4, 7);
+    const sequence = slice(line, 9, 13);
+    const registrationType = slice(line, 18, 18);
+    const registrationNumber = slice(line, 19, 32);
+    const address = slice(line, 33, 62);
+    const addressNumber = slice(line, 63, 67);
+    const complement = slice(line, 68, 82);
+    const district = slice(line, 83, 97);
+    const city = slice(line, 98, 117);
+    const postalCode = slice(line, 118, 125);
+    const state = slice(line, 126, 127);
+    const dueDate = slice(line, 128, 135);
+    const documentAmount = slice(line, 136, 150);
+
+    const parsed = {
+      segment: "B",
+      segmentLabel: segmentLabels.B,
+      lot: stripZeros(lot),
+      sequence: stripZeros(sequence),
+      registrationType,
+      registrationTypeLabel: registrationTypes[registrationType] || registrationType,
+      registrationNumber: formatCpfCnpj(registrationType, registrationNumber),
+      address: cleanText(address),
+      addressNumber: stripZeros(addressNumber),
+      complement: cleanText(complement),
+      district: cleanText(district),
+      city: cleanText(city),
+      state: cleanText(state),
+      postalCode: cleanText(postalCode),
+      dueDate: formatDate(dueDate),
+      documentAmount: centsToNumber(documentAmount),
+      documentAmountFormatted: formatMoneyFromCents(documentAmount),
+    };
+
+    if (includeFields) {
+      parsed.fields = [
+        field("Lote", 4, 7, lot, stripZeros(lot)),
+        field("Sequencial", 9, 13, sequence, stripZeros(sequence)),
+        field("Segmento", 14, 14, "B", "B - Complemento"),
+        field("Tipo inscricao", 18, 18, registrationType, registrationTypes[registrationType] || registrationType),
+        field("CPF/CNPJ", 19, 32, registrationNumber, formatCpfCnpj(registrationType, registrationNumber)),
+        field("Endereco", 33, 62, address),
+        field("Numero", 63, 67, addressNumber, stripZeros(addressNumber)),
+        field("Complemento", 68, 82, complement),
+        field("Bairro", 83, 97, district),
+        field("Cidade", 98, 117, city),
+        field("CEP", 118, 125, postalCode),
+        field("UF", 126, 127, state),
+        field("Vencimento", 128, 135, dueDate, formatDate(dueDate)),
+        field("Valor do documento", 136, 150, documentAmount, formatMoneyFromCents(documentAmount)),
+      ];
+    }
+
+    return parsed;
+  },
+};
+
+
+/* src/parser/cnab240Parser.js */
+const layouts = [bbCnab240Layout];
+
+function waitFrame() {
+  return new Promise((resolve) => setTimeout(resolve, 0));
+}
+
+function detectLineEnding(text) {
+  return text.includes("\r\n") ? "\r\n" : "\n";
+}
+
+function detectType(line) {
+  return line[7] || "";
+}
+
+function detectSegment(line) {
+  return line[13] || "";
+}
+
+function makeRecord(line, lineNumber, layout, parsed = {}) {
+  const type = detectType(line);
+  const segment = detectSegment(line);
+  return {
+    id: `${lineNumber}-${type}-${segment || "x"}`,
+    lineNumber,
+    type,
+    typeLabel: recordKinds[type] || "Registro desconhecido",
+    segment,
+    raw: line,
+    length: line.length,
+    layout: layout.id,
+    parsed,
+    warnings: [],
+  };
+}
+
+function validateLine(record) {
+  if (record.length !== 240) {
+    record.warnings.push(`Registro com ${record.length} caracteres; esperado: 240.`);
+  }
+  if (!record.typeLabel || record.typeLabel === "Registro desconhecido") {
+    record.warnings.push("Tipo de registro nao reconhecido na posicao 8.");
+  }
+  if (record.type === "3" && !record.segment) {
+    record.warnings.push("Segmento ausente na posicao 14.");
+  }
+}
+
+function parseLine(line, lineNumber, layout, currentLot) {
+  const type = detectType(line);
+  const segment = detectSegment(line);
+  let parsed = {};
+
+  if (type === "0") parsed = layout.parseHeaderArquivo(line);
+  if (type === "1") parsed = layout.parseHeaderLote(line);
+  if (type === "5") parsed = layout.parseTrailerLote(line);
+  if (type === "9") parsed = layout.parseTrailerArquivo(line);
+  if (type === "3" && segment === "A") parsed = layout.parseSegmentA(line, false);
+  if (type === "3" && segment === "B") parsed = layout.parseSegmentB(line, false);
+
+  const record = makeRecord(line, lineNumber, layout, parsed);
+  validateLine(record);
+  if (currentLot) record.currentLot = currentLot;
+  return record;
+}
+
+function hydrateCnabRecordFields(record) {
+  if (record.parsed?.fields?.length) return record.parsed.fields;
+  if (!record?.raw) return [];
+
+  const layout = layouts[0];
+  let parsed = {};
+  if (record.type === "3" && record.segment === "A") parsed = layout.parseSegmentA(record.raw);
+  if (record.type === "3" && record.segment === "B") parsed = layout.parseSegmentB(record.raw);
+  if (record.type === "0") parsed = layout.parseHeaderArquivo(record.raw);
+  if (record.type === "1") parsed = layout.parseHeaderLote(record.raw);
+  if (record.type === "5") parsed = layout.parseTrailerLote(record.raw);
+  if (record.type === "9") parsed = layout.parseTrailerArquivo(record.raw);
+
+  record.parsed = { ...(record.parsed || {}), fields: parsed.fields || [] };
+  return record.parsed.fields;
+}
+
+function addRecord(result, record) {
+  result.records.push(record);
+  result.counts.total += 1;
+  result.counts.byType[record.typeLabel] = (result.counts.byType[record.typeLabel] || 0) + 1;
+  if (record.segment) {
+    result.counts.bySegment[record.segment] = (result.counts.bySegment[record.segment] || 0) + 1;
+  }
+  if (record.warnings.length) {
+    result.warnings.push({ lineNumber: record.lineNumber, messages: record.warnings });
+  }
+}
+
+function buildPaymentSearch(payment) {
+  return normalizeSearch(
+    [
+      payment.favoredName,
+      payment.cpfCnpj,
+      payment.bank,
+      payment.bankName,
+      payment.agency,
+      payment.account,
+      payment.amountFormatted,
+      payment.amount,
+      payment.documentNumber,
+      payment.ourNumber,
+      payment.yourNumber,
+      payment.occurrences,
+      payment.occurrenceDescription,
+    ].join(" ")
+  );
+}
+
+const nonErrorOccurrenceCodes = new Set(["00", "ZA"]);
+
+const occurrenceDescriptions = {
+  "00": "Pagamento confirmado",
+  "01": "Insuficiencia de fundos - debito nao efetuado",
+  "02": "Credito ou debito cancelado pelo pagador/credor",
+  "03": "Debito autorizado pela agencia - efetuado",
+  AA: "Controle invalido",
+  AB: "Tipo de operacao invalido",
+  AC: "Tipo de servico invalido",
+  AD: "Forma de lancamento invalida",
+  AE: "Tipo/numero de inscricao invalido",
+  AF: "Codigo de convenio invalido",
+  AG: "Agencia/conta corrente/DV invalido",
+  AH: "Numero sequencial do registro no lote invalido",
+  AI: "Codigo de segmento de detalhe invalido",
+  AJ: "Tipo de movimento invalido",
+  AK: "Codigo da camara de compensacao invalido",
+  AL: "Banco favorecido ou depositario invalido",
+  AM: "Agencia mantenedora da conta do favorecido invalida",
+  AN: "Conta corrente/DV do favorecido invalido",
+  AO: "Nome do favorecido nao informado",
+  AP: "Data de lancamento invalida",
+  AQ: "Tipo/quantidade da moeda invalido",
+  AR: "Valor do lancamento invalido",
+  AS: "Aviso ao favorecido - identificacao invalida",
+  AT: "Tipo/numero de inscricao do favorecido invalido",
+  AU: "Logradouro do favorecido nao informado",
+  AV: "Numero do local do favorecido nao informado",
+  ZA: "Ocorrencia informativa tratada como sem erro",
+};
+
+function parseOccurrenceCodes(occurrences) {
+  const compact = String(occurrences || "").replace(/\s+/g, "").toUpperCase();
+  if (!compact) return [];
+  return compact.match(/.{1,2}/g) || [];
+}
+
+function describeOccurrences(occurrences) {
+  const codes = parseOccurrenceCodes(occurrences);
+  if (!codes.length) return "Sem ocorrencias";
+
+  return codes
+    .map((code) => `${code} - ${occurrenceDescriptions[code] || "Descricao nao cadastrada"}`)
+    .join("; ");
+}
+
+function hasReturnError(occurrences) {
+  const codes = parseOccurrenceCodes(occurrences);
+  return codes.some((code) => !nonErrorOccurrenceCodes.has(code));
+}
+
+function mergePayments(result) {
+  const payments = [];
+  const pendingByLot = new Map();
+
+  for (const record of result.records) {
+    if (record.type !== "3") continue;
+    const parsed = record.parsed || {};
+    const lot = parsed.lot || record.currentLot || "";
+
+    if (record.segment === "A") {
+      const occurrenceError = hasReturnError(parsed.occurrences);
+      const occurrenceDescription = describeOccurrences(parsed.occurrences);
+      const payment = {
+        id: `${lot}:${record.lineNumber}`,
+        key: `${lot}:${record.lineNumber}`,
+        lineNumber: record.lineNumber,
+        segmentARecord: record,
+        segmentBRecord: null,
+        lot,
+        sequence: parsed.sequence || "",
+        favoredName: parsed.favoredName || "",
+        cpfCnpj: "",
+        bank: parsed.favoredBank || "",
+        bankName: parsed.favoredBankName || "",
+        agency: parsed.agency || "",
+        account: parsed.account || "",
+        accountDigit: parsed.accountDigit || "",
+        amount: parsed.amount || 0,
+        amountFormatted: parsed.amountFormatted || "",
+        paymentDate: parsed.paymentDate || "",
+        documentNumber: parsed.documentNumber || "",
+        ourNumber: parsed.ourNumber || "",
+        yourNumber: parsed.yourNumber || "",
+        occurrences: parsed.occurrences || "",
+        occurrenceDescription,
+        hasOccurrenceError: occurrenceError,
+        status: occurrenceError ? "Com erro" : "OK",
+        warnings: [...record.warnings],
+      };
+      payments.push(payment);
+      pendingByLot.set(lot, payment);
+    }
+
+    if (record.segment === "B") {
+      const payment = pendingByLot.get(lot);
+      if (!payment || payment.segmentBRecord) continue;
+      payment.segmentBRecord = record;
+      payment.cpfCnpj = parsed.registrationNumber || "";
+      payment.city = parsed.city || "";
+      payment.state = parsed.state || "";
+      payment.address = parsed.address || "";
+      payment.warnings = [...payment.warnings, ...record.warnings];
+      pendingByLot.delete(lot);
+    }
+  }
+
+  result.payments = payments.map((payment) => ({
+    ...payment,
+    searchText: buildPaymentSearch(payment),
+  }));
+}
+
+function summarize(result) {
+  result.headers.file = result.records.find((record) => record.type === "0") || null;
+  result.headers.lots = result.records.filter((record) => record.type === "1");
+  result.trailers.lots = result.records.filter((record) => record.type === "5");
+  result.trailers.file = result.records.find((record) => record.type === "9") || null;
+  result.totals.payments = result.payments.length;
+  result.totals.value = result.payments.reduce((sum, item) => sum + (item.amount || 0), 0);
+  result.totals.occurrences = result.payments.filter((item) => item.hasOccurrenceError).length;
+}
+
+function compactParsedResult(result) {
+  result.records = result.records.filter((record) => record.type !== "3");
+  return result;
+}
+
+async function parseCnab240Text(text, options = {}) {
+  const layout = layouts[0];
+  const result = {
+    layout: layout.name,
+    fileName: options.fileName || "",
+    importedAt: new Date().toISOString(),
+    records: [],
+    payments: [],
+    warnings: [],
+    counts: { total: 0, byType: {}, bySegment: {} },
+    headers: { file: null, lots: [] },
+    trailers: { file: null, lots: [] },
+    totals: { payments: 0, value: 0, occurrences: 0 },
+  };
+
+  const lines = text
+    .replace(/\uFEFF/g, "")
+    .split(detectLineEnding(text))
+    .map((line) => line.replace(/\r$/, ""))
+    .filter((line) => line.length > 0);
+
+  let currentLot = "";
+  const yieldEvery = options.yieldEvery ?? 5000;
+  for (let index = 0; index < lines.length; index += 1) {
+    const line = lines[index];
+    const record = parseLine(line, index + 1, layout, currentLot);
+    if (record.type === "1") currentLot = record.parsed.lot || currentLot;
+    addRecord(result, record);
+
+    if (yieldEvery > 0 && index % yieldEvery === 0) {
+      options.onProgress?.({ current: index + 1, total: lines.length });
+      await waitFrame();
+    }
+  }
+
+  mergePayments(result);
+  summarize(result);
+  compactParsedResult(result);
+  options.onProgress?.({ current: lines.length, total: lines.length });
+  return result;
+}
+
+function readFileAsText(file, onProgress) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(reader.error);
+    reader.onload = () => resolve(String(reader.result || ""));
+    reader.onprogress = (event) => {
+      if (event.lengthComputable) onProgress?.({ current: event.loaded, total: event.total });
+    };
+    reader.readAsText(file, "ISO-8859-1");
+  });
+}
+
+
+/* src/services/exportService.js */
+function exportPaymentsCsv(payments, fileName = "cnab240-pagamentos.csv") {
+  const headers = [
+    "Linha",
+    "Lote",
+    "Sequencial",
+    "Nome",
+    "CPF/CNPJ",
+    "Banco",
+    "Agencia",
+    "Conta",
+    "Valor",
+    "Data pagamento",
+    "Documento",
+    "Nosso numero",
+    "Seu numero",
+    "Ocorrencias",
+    "Descricao ocorrencias",
+  ];
+
+  const rows = payments.map((item) => [
+    item.lineNumber,
+    item.lot,
+    item.sequence,
+    item.favoredName,
+    item.cpfCnpj,
+    `${item.bank} ${item.bankName}`.trim(),
+    item.agency,
+    `${item.account}-${item.accountDigit || ""}`.replace(/-$/, ""),
+    item.amountFormatted,
+    item.paymentDate,
+    item.documentNumber,
+    item.ourNumber,
+    item.yourNumber,
+    item.occurrences,
+    item.occurrenceDescription,
+  ]);
+
+  const csv = [headers, ...rows].map((row) => row.map(csvEscape).join(";")).join("\n");
+  downloadText(fileName, csv, "text/csv;charset=utf-8");
+}
+
+function formatPaymentLine(payment) {
+  return [
+    `Linha ${payment.lineNumber}`,
+    `Lote ${payment.lot}`,
+    payment.favoredName || "Sem nome",
+    payment.cpfCnpj || "CPF/CNPJ nao informado",
+    `${payment.bank} ${payment.bankName}`.trim(),
+    `Ag ${payment.agency}`,
+    `Conta ${payment.account}${payment.accountDigit ? `-${payment.accountDigit}` : ""}`,
+    payment.amountFormatted,
+    payment.paymentDate ? `Pgto ${payment.paymentDate}` : "",
+    payment.documentNumber ? `Doc ${payment.documentNumber}` : "",
+    payment.hasOccurrenceError ? `Ocorrencias ${payment.occurrences}` : "Sem erro",
+    payment.occurrenceDescription || "",
+  ]
+    .filter(Boolean)
+    .join(" | ");
+}
+
+
+/* src/services/parserWorkerSource.js */
+const parserWorkerSource = "/* src/models/cnabFields.js */\nconst recordKinds = {\n  \"0\": \"Header do arquivo\",\n  \"1\": \"Header de lote\",\n  \"3\": \"Detalhe\",\n  \"5\": \"Trailer de lote\",\n  \"9\": \"Trailer do arquivo\",\n};\n\nconst segmentLabels = {\n  A: \"Pagamento\",\n  B: \"Complemento do favorecido\",\n};\n\nconst movementTypes = {\n  \"0\": \"Inclusao\",\n  \"3\": \"Baixa\",\n  \"5\": \"Alteracao\",\n  \"9\": \"Exclusao\",\n};\n\nconst paymentForms = {\n  \"01\": \"Credito em conta corrente/salario\",\n  \"03\": \"DOC/TED\",\n  \"05\": \"Credito em poupanca\",\n  \"30\": \"Liquidacao de titulos\",\n  \"41\": \"TED outra titularidade\",\n  \"43\": \"TED mesma titularidade\",\n  \"45\": \"PIX transferencia\",\n};\n\nconst registrationTypes = {\n  \"1\": \"CPF\",\n  \"2\": \"CNPJ\",\n};\n\nconst bankNames = {\n  \"001\": \"Banco do Brasil\",\n  \"033\": \"Santander\",\n  \"077\": \"Inter\",\n  \"104\": \"Caixa\",\n  \"237\": \"Bradesco\",\n  \"341\": \"Itau\",\n  \"748\": \"Sicredi\",\n  \"756\": \"Sicoob\",\n};\n\n\n/* src/utils/format.js */\nfunction onlyDigits(value) {\n  return String(value || \"\").replace(/\\D/g, \"\");\n}\n\nfunction cleanText(value) {\n  return String(value || \"\").replace(/\\s+/g, \" \").trim();\n}\n\nfunction stripZeros(value) {\n  const cleaned = onlyDigits(value).replace(/^0+/, \"\");\n  return cleaned || \"0\";\n}\n\nfunction formatMoneyFromCents(raw) {\n  const digits = onlyDigits(raw);\n  if (!digits) return \"\";\n  const cents = Number.parseInt(digits, 10);\n  return new Intl.NumberFormat(\"pt-BR\", {\n    style: \"currency\",\n    currency: \"BRL\",\n  }).format(cents / 100);\n}\n\nfunction centsToNumber(raw) {\n  const digits = onlyDigits(raw);\n  return digits ? Number.parseInt(digits, 10) / 100 : 0;\n}\n\nfunction formatDate(raw) {\n  const digits = onlyDigits(raw);\n  if (digits.length !== 8 || digits === \"00000000\") return \"\";\n  const day = digits.slice(0, 2);\n  const month = digits.slice(2, 4);\n  const year = digits.slice(4, 8);\n  return `${day}/${month}/${year}`;\n}\n\nfunction formatCpfCnpj(type, value) {\n  const digits = onlyDigits(value);\n  if (type === \"1\" \u0026\u0026 digits.length \u003e= 11) {\n    const cpf = digits.slice(-11);\n    return cpf.replace(/(\\d{3})(\\d{3})(\\d{3})(\\d{2})/, \"$1.$2.$3-$4\");\n  }\n  if (type === \"2\" \u0026\u0026 digits.length \u003e= 14) {\n    const cnpj = digits.slice(-14);\n    return cnpj.replace(/(\\d{2})(\\d{3})(\\d{3})(\\d{4})(\\d{2})/, \"$1.$2.$3/$4-$5\");\n  }\n  return stripZeros(digits);\n}\n\nfunction normalizeSearch(value) {\n  return String(value || \"\")\n    .normalize(\"NFD\")\n    .replace(/[\\u0300-\\u036f]/g, \"\")\n    .toLowerCase();\n}\n\nfunction downloadText(filename, content, mime = \"text/plain;charset=utf-8\") {\n  const blob = new Blob([content], { type: mime });\n  const url = URL.createObjectURL(blob);\n  const link = document.createElement(\"a\");\n  link.href = url;\n  link.download = filename;\n  link.click();\n  URL.revokeObjectURL(url);\n}\n\nasync function copyText(text) {\n  if (navigator.clipboard?.writeText) {\n    await navigator.clipboard.writeText(text);\n    return;\n  }\n\n  const area = document.createElement(\"textarea\");\n  area.value = text;\n  area.setAttribute(\"readonly\", \"\");\n  area.style.position = \"fixed\";\n  area.style.left = \"-9999px\";\n  document.body.appendChild(area);\n  area.select();\n  document.execCommand(\"copy\");\n  area.remove();\n}\n\nfunction csvEscape(value) {\n  const text = String(value ?? \"\");\n  if (/[\",\\n;]/.test(text)) return `\"${text.replace(/\"/g, \u0027\"\"\u0027)}\"`;\n  return text;\n}\n\n\n/* src/parser/layouts/bbCnab240.js */\nfunction slice(line, start, end) {\n  return line.slice(start - 1, end);\n}\n\nfunction field(label, start, end, raw, value = cleanText(raw)) {\n  return { label, start, end, raw, value };\n}\n\nfunction bankName(code) {\n  return bankNames[code] || `Banco ${code}`;\n}\n\nconst bbCnab240Layout = {\n  id: \"bb-cnab240\",\n  name: \"CNAB240 Banco do Brasil / FEBRABAN\",\n\n  parseHeaderArquivo(line) {\n    const bank = slice(line, 1, 3);\n    const companyName = slice(line, 73, 102);\n    const fileDate = slice(line, 144, 151);\n    const fileTime = slice(line, 152, 157);\n    const sequence = slice(line, 158, 163);\n\n    return {\n      bank,\n      bankName: bankName(bank),\n      companyName: cleanText(companyName),\n      fileDate: formatDate(fileDate),\n      fileTime: fileTime.replace(/(\\d{2})(\\d{2})(\\d{2})/, \"$1:$2:$3\"),\n      sequence: stripZeros(sequence),\n      fields: [\n        field(\"Banco\", 1, 3, bank, `${bank} - ${bankName(bank)}`),\n        field(\"Tipo de registro\", 8, 8, slice(line, 8, 8), \"Header do arquivo\"),\n        field(\"Nome da empresa\", 73, 102, companyName),\n        field(\"Data de geracao\", 144, 151, fileDate, formatDate(fileDate)),\n        field(\"Hora de geracao\", 152, 157, fileTime),\n        field(\"Sequencia do arquivo\", 158, 163, sequence, stripZeros(sequence)),\n      ],\n    };\n  },\n\n  parseHeaderLote(line) {\n    const bank = slice(line, 1, 3);\n    const lot = slice(line, 4, 7);\n    const serviceType = slice(line, 10, 11);\n    const paymentForm = slice(line, 12, 13);\n    const companyName = slice(line, 73, 102);\n    const address = slice(line, 143, 172);\n    const city = slice(line, 193, 212);\n    const state = slice(line, 221, 222);\n\n    return {\n      bank,\n      bankName: bankName(bank),\n      lot: stripZeros(lot),\n      serviceType,\n      paymentForm,\n      paymentFormLabel: paymentForms[paymentForm] || paymentForm,\n      companyName: cleanText(companyName),\n      city: cleanText(city),\n      state: cleanText(state),\n      fields: [\n        field(\"Banco\", 1, 3, bank, `${bank} - ${bankName(bank)}`),\n        field(\"Lote\", 4, 7, lot, stripZeros(lot)),\n        field(\"Tipo de servico\", 10, 11, serviceType),\n        field(\"Forma de lancamento\", 12, 13, paymentForm, paymentForms[paymentForm] || paymentForm),\n        field(\"Nome da empresa\", 73, 102, companyName),\n        field(\"Endereco\", 143, 172, address),\n        field(\"Cidade\", 193, 212, city),\n        field(\"UF\", 221, 222, state),\n      ],\n    };\n  },\n\n  parseTrailerLote(line) {\n    const lot = slice(line, 4, 7);\n    const records = slice(line, 18, 23);\n    const total = slice(line, 24, 41);\n    return {\n      lot: stripZeros(lot),\n      records: stripZeros(records),\n      totalValue: centsToNumber(total),\n      totalValueFormatted: formatMoneyFromCents(total),\n      fields: [\n        field(\"Lote\", 4, 7, lot, stripZeros(lot)),\n        field(\"Quantidade de registros\", 18, 23, records, stripZeros(records)),\n        field(\"Somatoria de valores\", 24, 41, total, formatMoneyFromCents(total)),\n      ],\n    };\n  },\n\n  parseTrailerArquivo(line) {\n    const lots = slice(line, 18, 23);\n    const records = slice(line, 24, 29);\n    return {\n      lots: stripZeros(lots),\n      records: stripZeros(records),\n      fields: [\n        field(\"Quantidade de lotes\", 18, 23, lots, stripZeros(lots)),\n        field(\"Quantidade de registros\", 24, 29, records, stripZeros(records)),\n      ],\n    };\n  },\n\n  parseSegmentA(line, includeFields = true) {\n    const bank = slice(line, 1, 3);\n    const lot = slice(line, 4, 7);\n    const sequence = slice(line, 9, 13);\n    const movementType = slice(line, 15, 15);\n    const instructionCode = slice(line, 16, 17);\n    const favoredBank = slice(line, 21, 23);\n    const agency = slice(line, 24, 28);\n    const agencyDigit = slice(line, 29, 29);\n    const account = slice(line, 30, 41);\n    const accountDigit = slice(line, 42, 42);\n    const accountComboDigit = slice(line, 43, 43);\n    const name = slice(line, 44, 73);\n    const documentNumber = slice(line, 74, 93);\n    const paymentDate = slice(line, 94, 101);\n    const amount = slice(line, 120, 134);\n    const ourNumber = slice(line, 135, 154);\n    const effectiveDate = slice(line, 155, 162);\n    const effectiveAmount = slice(line, 163, 177);\n    const yourNumber = slice(line, 178, 197);\n    const occurrences = slice(line, 231, 240);\n\n    const parsed = {\n      segment: \"A\",\n      segmentLabel: segmentLabels.A,\n      lot: stripZeros(lot),\n      sequence: stripZeros(sequence),\n      bank,\n      favoredBank,\n      favoredBankName: bankName(favoredBank),\n      agency: stripZeros(agency),\n      agencyDigit: cleanText(agencyDigit),\n      account: stripZeros(account),\n      accountDigit: cleanText(accountDigit),\n      accountComboDigit: cleanText(accountComboDigit),\n      favoredName: cleanText(name),\n      documentNumber: cleanText(documentNumber),\n      ourNumber: cleanText(ourNumber),\n      yourNumber: cleanText(yourNumber),\n      amount: centsToNumber(amount),\n      amountFormatted: formatMoneyFromCents(amount),\n      effectiveAmount: centsToNumber(effectiveAmount),\n      effectiveAmountFormatted: formatMoneyFromCents(effectiveAmount),\n      paymentDate: formatDate(paymentDate),\n      effectiveDate: formatDate(effectiveDate),\n      movementType,\n      movementLabel: movementTypes[movementType] || movementType,\n      instructionCode,\n      occurrences: cleanText(occurrences),\n    };\n\n    if (includeFields) {\n      parsed.fields = [\n        field(\"Banco do arquivo\", 1, 3, bank, `${bank} - ${bankName(bank)}`),\n        field(\"Lote\", 4, 7, lot, stripZeros(lot)),\n        field(\"Sequencial\", 9, 13, sequence, stripZeros(sequence)),\n        field(\"Segmento\", 14, 14, \"A\", \"A - Pagamento\"),\n        field(\"Movimento\", 15, 15, movementType, movementTypes[movementType] || movementType),\n        field(\"Instrucao\", 16, 17, instructionCode),\n        field(\"Banco favorecido\", 21, 23, favoredBank, `${favoredBank} - ${bankName(favoredBank)}`),\n        field(\"Agencia\", 24, 28, agency, stripZeros(agency)),\n        field(\"DV agencia\", 29, 29, agencyDigit),\n        field(\"Conta\", 30, 41, account, stripZeros(account)),\n        field(\"DV conta\", 42, 42, accountDigit),\n        field(\"DV ag/conta\", 43, 43, accountComboDigit),\n        field(\"Nome favorecido\", 44, 73, name),\n        field(\"Seu numero / documento\", 74, 93, documentNumber),\n        field(\"Data de pagamento\", 94, 101, paymentDate, formatDate(paymentDate)),\n        field(\"Valor\", 120, 134, amount, formatMoneyFromCents(amount)),\n        field(\"Nosso numero\", 135, 154, ourNumber),\n        field(\"Data efetiva\", 155, 162, effectiveDate, formatDate(effectiveDate)),\n        field(\"Valor efetivo\", 163, 177, effectiveAmount, formatMoneyFromCents(effectiveAmount)),\n        field(\"Informacao / seu numero\", 178, 197, yourNumber),\n        field(\"Ocorrencias\", 231, 240, occurrences),\n      ];\n    }\n\n    return parsed;\n  },\n\n  parseSegmentB(line, includeFields = true) {\n    const lot = slice(line, 4, 7);\n    const sequence = slice(line, 9, 13);\n    const registrationType = slice(line, 18, 18);\n    const registrationNumber = slice(line, 19, 32);\n    const address = slice(line, 33, 62);\n    const addressNumber = slice(line, 63, 67);\n    const complement = slice(line, 68, 82);\n    const district = slice(line, 83, 97);\n    const city = slice(line, 98, 117);\n    const postalCode = slice(line, 118, 125);\n    const state = slice(line, 126, 127);\n    const dueDate = slice(line, 128, 135);\n    const documentAmount = slice(line, 136, 150);\n\n    const parsed = {\n      segment: \"B\",\n      segmentLabel: segmentLabels.B,\n      lot: stripZeros(lot),\n      sequence: stripZeros(sequence),\n      registrationType,\n      registrationTypeLabel: registrationTypes[registrationType] || registrationType,\n      registrationNumber: formatCpfCnpj(registrationType, registrationNumber),\n      address: cleanText(address),\n      addressNumber: stripZeros(addressNumber),\n      complement: cleanText(complement),\n      district: cleanText(district),\n      city: cleanText(city),\n      state: cleanText(state),\n      postalCode: cleanText(postalCode),\n      dueDate: formatDate(dueDate),\n      documentAmount: centsToNumber(documentAmount),\n      documentAmountFormatted: formatMoneyFromCents(documentAmount),\n    };\n\n    if (includeFields) {\n      parsed.fields = [\n        field(\"Lote\", 4, 7, lot, stripZeros(lot)),\n        field(\"Sequencial\", 9, 13, sequence, stripZeros(sequence)),\n        field(\"Segmento\", 14, 14, \"B\", \"B - Complemento\"),\n        field(\"Tipo inscricao\", 18, 18, registrationType, registrationTypes[registrationType] || registrationType),\n        field(\"CPF/CNPJ\", 19, 32, registrationNumber, formatCpfCnpj(registrationType, registrationNumber)),\n        field(\"Endereco\", 33, 62, address),\n        field(\"Numero\", 63, 67, addressNumber, stripZeros(addressNumber)),\n        field(\"Complemento\", 68, 82, complement),\n        field(\"Bairro\", 83, 97, district),\n        field(\"Cidade\", 98, 117, city),\n        field(\"CEP\", 118, 125, postalCode),\n        field(\"UF\", 126, 127, state),\n        field(\"Vencimento\", 128, 135, dueDate, formatDate(dueDate)),\n        field(\"Valor do documento\", 136, 150, documentAmount, formatMoneyFromCents(documentAmount)),\n      ];\n    }\n\n    return parsed;\n  },\n};\n\n\n/* src/parser/cnab240Parser.js */\nconst layouts = [bbCnab240Layout];\n\nfunction waitFrame() {\n  return new Promise((resolve) =\u003e setTimeout(resolve, 0));\n}\n\nfunction detectLineEnding(text) {\n  return text.includes(\"\\r\\n\") ? \"\\r\\n\" : \"\\n\";\n}\n\nfunction detectType(line) {\n  return line[7] || \"\";\n}\n\nfunction detectSegment(line) {\n  return line[13] || \"\";\n}\n\nfunction makeRecord(line, lineNumber, layout, parsed = {}) {\n  const type = detectType(line);\n  const segment = detectSegment(line);\n  return {\n    id: `${lineNumber}-${type}-${segment || \"x\"}`,\n    lineNumber,\n    type,\n    typeLabel: recordKinds[type] || \"Registro desconhecido\",\n    segment,\n    raw: line,\n    length: line.length,\n    layout: layout.id,\n    parsed,\n    warnings: [],\n  };\n}\n\nfunction validateLine(record) {\n  if (record.length !== 240) {\n    record.warnings.push(`Registro com ${record.length} caracteres; esperado: 240.`);\n  }\n  if (!record.typeLabel || record.typeLabel === \"Registro desconhecido\") {\n    record.warnings.push(\"Tipo de registro nao reconhecido na posicao 8.\");\n  }\n  if (record.type === \"3\" \u0026\u0026 !record.segment) {\n    record.warnings.push(\"Segmento ausente na posicao 14.\");\n  }\n}\n\nfunction parseLine(line, lineNumber, layout, currentLot) {\n  const type = detectType(line);\n  const segment = detectSegment(line);\n  let parsed = {};\n\n  if (type === \"0\") parsed = layout.parseHeaderArquivo(line);\n  if (type === \"1\") parsed = layout.parseHeaderLote(line);\n  if (type === \"5\") parsed = layout.parseTrailerLote(line);\n  if (type === \"9\") parsed = layout.parseTrailerArquivo(line);\n  if (type === \"3\" \u0026\u0026 segment === \"A\") parsed = layout.parseSegmentA(line, false);\n  if (type === \"3\" \u0026\u0026 segment === \"B\") parsed = layout.parseSegmentB(line, false);\n\n  const record = makeRecord(line, lineNumber, layout, parsed);\n  validateLine(record);\n  if (currentLot) record.currentLot = currentLot;\n  return record;\n}\n\nfunction hydrateCnabRecordFields(record) {\n  if (record.parsed?.fields?.length) return record.parsed.fields;\n  if (!record?.raw) return [];\n\n  const layout = layouts[0];\n  let parsed = {};\n  if (record.type === \"3\" \u0026\u0026 record.segment === \"A\") parsed = layout.parseSegmentA(record.raw);\n  if (record.type === \"3\" \u0026\u0026 record.segment === \"B\") parsed = layout.parseSegmentB(record.raw);\n  if (record.type === \"0\") parsed = layout.parseHeaderArquivo(record.raw);\n  if (record.type === \"1\") parsed = layout.parseHeaderLote(record.raw);\n  if (record.type === \"5\") parsed = layout.parseTrailerLote(record.raw);\n  if (record.type === \"9\") parsed = layout.parseTrailerArquivo(record.raw);\n\n  record.parsed = { ...(record.parsed || {}), fields: parsed.fields || [] };\n  return record.parsed.fields;\n}\n\nfunction addRecord(result, record) {\n  result.records.push(record);\n  result.counts.total += 1;\n  result.counts.byType[record.typeLabel] = (result.counts.byType[record.typeLabel] || 0) + 1;\n  if (record.segment) {\n    result.counts.bySegment[record.segment] = (result.counts.bySegment[record.segment] || 0) + 1;\n  }\n  if (record.warnings.length) {\n    result.warnings.push({ lineNumber: record.lineNumber, messages: record.warnings });\n  }\n}\n\nfunction buildPaymentSearch(payment) {\n  return normalizeSearch(\n    [\n      payment.favoredName,\n      payment.cpfCnpj,\n      payment.bank,\n      payment.bankName,\n      payment.agency,\n      payment.account,\n      payment.amountFormatted,\n      payment.amount,\n      payment.documentNumber,\n      payment.ourNumber,\n      payment.yourNumber,\n      payment.occurrences,\n      payment.occurrenceDescription,\n    ].join(\" \")\n  );\n}\n\nconst nonErrorOccurrenceCodes = new Set([\"00\", \"ZA\"]);\n\nconst occurrenceDescriptions = {\n  \"00\": \"Pagamento confirmado\",\n  \"01\": \"Insuficiencia de fundos - debito nao efetuado\",\n  \"02\": \"Credito ou debito cancelado pelo pagador/credor\",\n  \"03\": \"Debito autorizado pela agencia - efetuado\",\n  AA: \"Controle invalido\",\n  AB: \"Tipo de operacao invalido\",\n  AC: \"Tipo de servico invalido\",\n  AD: \"Forma de lancamento invalida\",\n  AE: \"Tipo/numero de inscricao invalido\",\n  AF: \"Codigo de convenio invalido\",\n  AG: \"Agencia/conta corrente/DV invalido\",\n  AH: \"Numero sequencial do registro no lote invalido\",\n  AI: \"Codigo de segmento de detalhe invalido\",\n  AJ: \"Tipo de movimento invalido\",\n  AK: \"Codigo da camara de compensacao invalido\",\n  AL: \"Banco favorecido ou depositario invalido\",\n  AM: \"Agencia mantenedora da conta do favorecido invalida\",\n  AN: \"Conta corrente/DV do favorecido invalido\",\n  AO: \"Nome do favorecido nao informado\",\n  AP: \"Data de lancamento invalida\",\n  AQ: \"Tipo/quantidade da moeda invalido\",\n  AR: \"Valor do lancamento invalido\",\n  AS: \"Aviso ao favorecido - identificacao invalida\",\n  AT: \"Tipo/numero de inscricao do favorecido invalido\",\n  AU: \"Logradouro do favorecido nao informado\",\n  AV: \"Numero do local do favorecido nao informado\",\n  ZA: \"Ocorrencia informativa tratada como sem erro\",\n};\n\nfunction parseOccurrenceCodes(occurrences) {\n  const compact = String(occurrences || \"\").replace(/\\s+/g, \"\").toUpperCase();\n  if (!compact) return [];\n  return compact.match(/.{1,2}/g) || [];\n}\n\nfunction describeOccurrences(occurrences) {\n  const codes = parseOccurrenceCodes(occurrences);\n  if (!codes.length) return \"Sem ocorrencias\";\n\n  return codes\n    .map((code) =\u003e `${code} - ${occurrenceDescriptions[code] || \"Descricao nao cadastrada\"}`)\n    .join(\"; \");\n}\n\nfunction hasReturnError(occurrences) {\n  const codes = parseOccurrenceCodes(occurrences);\n  return codes.some((code) =\u003e !nonErrorOccurrenceCodes.has(code));\n}\n\nfunction mergePayments(result) {\n  const payments = [];\n  const pendingByLot = new Map();\n\n  for (const record of result.records) {\n    if (record.type !== \"3\") continue;\n    const parsed = record.parsed || {};\n    const lot = parsed.lot || record.currentLot || \"\";\n\n    if (record.segment === \"A\") {\n      const occurrenceError = hasReturnError(parsed.occurrences);\n      const occurrenceDescription = describeOccurrences(parsed.occurrences);\n      const payment = {\n        id: `${lot}:${record.lineNumber}`,\n        key: `${lot}:${record.lineNumber}`,\n        lineNumber: record.lineNumber,\n        segmentARecord: record,\n        segmentBRecord: null,\n        lot,\n        sequence: parsed.sequence || \"\",\n        favoredName: parsed.favoredName || \"\",\n        cpfCnpj: \"\",\n        bank: parsed.favoredBank || \"\",\n        bankName: parsed.favoredBankName || \"\",\n        agency: parsed.agency || \"\",\n        account: parsed.account || \"\",\n        accountDigit: parsed.accountDigit || \"\",\n        amount: parsed.amount || 0,\n        amountFormatted: parsed.amountFormatted || \"\",\n        paymentDate: parsed.paymentDate || \"\",\n        documentNumber: parsed.documentNumber || \"\",\n        ourNumber: parsed.ourNumber || \"\",\n        yourNumber: parsed.yourNumber || \"\",\n        occurrences: parsed.occurrences || \"\",\n        occurrenceDescription,\n        hasOccurrenceError: occurrenceError,\n        status: occurrenceError ? \"Com erro\" : \"OK\",\n        warnings: [...record.warnings],\n      };\n      payments.push(payment);\n      pendingByLot.set(lot, payment);\n    }\n\n    if (record.segment === \"B\") {\n      const payment = pendingByLot.get(lot);\n      if (!payment || payment.segmentBRecord) continue;\n      payment.segmentBRecord = record;\n      payment.cpfCnpj = parsed.registrationNumber || \"\";\n      payment.city = parsed.city || \"\";\n      payment.state = parsed.state || \"\";\n      payment.address = parsed.address || \"\";\n      payment.warnings = [...payment.warnings, ...record.warnings];\n      pendingByLot.delete(lot);\n    }\n  }\n\n  result.payments = payments.map((payment) =\u003e ({\n    ...payment,\n    searchText: buildPaymentSearch(payment),\n  }));\n}\n\nfunction summarize(result) {\n  result.headers.file = result.records.find((record) =\u003e record.type === \"0\") || null;\n  result.headers.lots = result.records.filter((record) =\u003e record.type === \"1\");\n  result.trailers.lots = result.records.filter((record) =\u003e record.type === \"5\");\n  result.trailers.file = result.records.find((record) =\u003e record.type === \"9\") || null;\n  result.totals.payments = result.payments.length;\n  result.totals.value = result.payments.reduce((sum, item) =\u003e sum + (item.amount || 0), 0);\n  result.totals.occurrences = result.payments.filter((item) =\u003e item.hasOccurrenceError).length;\n}\n\nfunction compactParsedResult(result) {\n  result.records = result.records.filter((record) =\u003e record.type !== \"3\");\n  return result;\n}\n\nasync function parseCnab240Text(text, options = {}) {\n  const layout = layouts[0];\n  const result = {\n    layout: layout.name,\n    fileName: options.fileName || \"\",\n    importedAt: new Date().toISOString(),\n    records: [],\n    payments: [],\n    warnings: [],\n    counts: { total: 0, byType: {}, bySegment: {} },\n    headers: { file: null, lots: [] },\n    trailers: { file: null, lots: [] },\n    totals: { payments: 0, value: 0, occurrences: 0 },\n  };\n\n  const lines = text\n    .replace(/\\uFEFF/g, \"\")\n    .split(detectLineEnding(text))\n    .map((line) =\u003e line.replace(/\\r$/, \"\"))\n    .filter((line) =\u003e line.length \u003e 0);\n\n  let currentLot = \"\";\n  const yieldEvery = options.yieldEvery ?? 5000;\n  for (let index = 0; index \u003c lines.length; index += 1) {\n    const line = lines[index];\n    const record = parseLine(line, index + 1, layout, currentLot);\n    if (record.type === \"1\") currentLot = record.parsed.lot || currentLot;\n    addRecord(result, record);\n\n    if (yieldEvery \u003e 0 \u0026\u0026 index % yieldEvery === 0) {\n      options.onProgress?.({ current: index + 1, total: lines.length });\n      await waitFrame();\n    }\n  }\n\n  mergePayments(result);\n  summarize(result);\n  compactParsedResult(result);\n  options.onProgress?.({ current: lines.length, total: lines.length });\n  return result;\n}\n\nfunction readFileAsText(file, onProgress) {\n  return new Promise((resolve, reject) =\u003e {\n    const reader = new FileReader();\n    reader.onerror = () =\u003e reject(reader.error);\n    reader.onload = () =\u003e resolve(String(reader.result || \"\"));\n    reader.onprogress = (event) =\u003e {\n      if (event.lengthComputable) onProgress?.({ current: event.loaded, total: event.total });\n    };\n    reader.readAsText(file, \"ISO-8859-1\");\n  });\n}\n\n\nself.onmessage = async (event) =\u003e {\n  const message = event.data || {};\n  if (message.type !== \"parseFile\") return;\n\n  try {\n    self.postMessage({ type: \"progress\", progress: { current: 0, total: message.file.size, stage: \"reading\" } });\n    const reader = new FileReaderSync();\n    const text = reader.readAsText(message.file, \"ISO-8859-1\");\n    self.postMessage({ type: \"progress\", progress: { current: 0, total: 1, stage: \"parsing\" } });\n    const result = await parseCnab240Text(text, {\n      fileName: message.fileName,\n      yieldEvery: 5000,\n      onProgress: (progress) =\u003e self.postMessage({ type: \"progress\", progress: { ...progress, stage: \"parsing\" } }),\n    });\n    self.postMessage({ type: \"progress\", progress: { current: 1, total: 1, stage: \"finalizing\" } });\n    self.postMessage({ type: \"done\", result });\n  } catch (error) {\n    self.postMessage({ type: \"error\", error: error \u0026\u0026 error.message ? error.message : String(error) });\n  }\n};";
+
+/* src/services/parserWorkerService.js */
+function parseFileWithWorker(file, onProgress) {
+  if (!window.Worker || !window.Blob || !window.URL) {
+    return Promise.reject(new Error("Web Worker indisponivel neste navegador."));
+  }
+
+  return new Promise((resolve, reject) => {
+    const blob = new Blob([parserWorkerSource], { type: "text/javascript;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const worker = new Worker(url);
+
+    const cleanup = () => {
+      worker.terminate();
+      URL.revokeObjectURL(url);
+    };
+
+    worker.onmessage = (event) => {
+      const message = event.data || {};
+      if (message.type === "progress") {
+        onProgress?.(message.progress);
+        return;
+      }
+      if (message.type === "done") {
+        cleanup();
+        resolve(message.result);
+        return;
+      }
+      if (message.type === "error") {
+        cleanup();
+        reject(new Error(message.error || "Falha ao processar arquivo no Worker."));
+      }
+    };
+
+    worker.onerror = (event) => {
+      cleanup();
+      reject(new Error(event.message || "Erro no Worker de importacao."));
+    };
+
+    worker.postMessage({ type: "parseFile", file, fileName: file.name });
+  });
+}
+
+
+/* src/components/icons.js */
+const icons = {
+  upload:
+    '<svg viewBox="0 0 24 24"><path d="M12 3v12"/><path d="m7 8 5-5 5 5"/><path d="M4 15v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/></svg>',
+  search:
+    '<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>',
+  file:
+    '<svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>',
+  table:
+    '<svg viewBox="0 0 24 24"><path d="M3 5h18v14H3z"/><path d="M3 10h18"/><path d="M9 5v14"/></svg>',
+  warning:
+    '<svg viewBox="0 0 24 24"><path d="m12 3 10 18H2z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>',
+  copy:
+    '<svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>',
+  download:
+    '<svg viewBox="0 0 24 24"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>',
+  moon:
+    '<svg viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 7.5A9 9 0 1 1 12 3Z"/></svg>',
+  sun:
+    '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>',
+  close:
+    '<svg viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>',
+};
+
+
+/* src/components/app.js */
+const pageSizeOptions = [25, 50, 100, 250];
+
+function createApp(root) {
+  const state = {
+    parseResult: null,
+    filteredPayments: [],
+    query: "",
+    segmentFilter: "todos",
+    occurrenceFilter: "todos",
+    page: 1,
+    pageSize: 50,
+    selectedPayment: null,
+    activeView: "movimentos",
+    isDark: localStorage.getItem("cnab-theme") === "dark",
+    loading: false,
+    progress: null,
+    message: "",
+    searchTimer: null,
+  };
+
+  function setState(patch) {
+    Object.assign(state, patch);
+    render();
+  }
+
+  function updateImportProgress(progress, message) {
+    state.progress = progress;
+    state.message = message;
+    state.loading = true;
+    render();
+  }
+
+  function applyFilters() {
+    if (!state.parseResult) {
+      state.filteredPayments = [];
+      return;
+    }
+    const query = normalizeSearch(state.query);
+    state.filteredPayments = state.parseResult.payments.filter((payment) => {
+      const matchesQuery = !query || payment.searchText.includes(query);
+      const matchesOccurrence =
+        state.occurrenceFilter === "todos" ||
+        (state.occurrenceFilter === "com" && payment.hasOccurrenceError) ||
+        (state.occurrenceFilter === "sem" && !payment.hasOccurrenceError);
+      return matchesQuery && matchesOccurrence;
+    });
+    const maxPage = Math.max(1, Math.ceil(state.filteredPayments.length / state.pageSize));
+    if (state.page > maxPage) state.page = maxPage;
+  }
+
+  async function handleFile(file) {
+    if (!file) return;
+    setState({
+      loading: true,
+      progress: { current: 0, total: file.size, stage: "reading" },
+      message: "Lendo arquivo...",
+    });
+    try {
+      const parsed = await parseFileWithWorker(file, (progress) => {
+        const message =
+          progress.stage === "finalizing"
+            ? "Finalizando visualizacao..."
+            : progress.stage === "parsing"
+              ? "Interpretando CNAB240 em segundo plano..."
+              : "Lendo arquivo...";
+        updateImportProgress(progress, message);
+      }).catch(async () => {
+        const text = await readFileAsText(file, (progress) =>
+          updateImportProgress({ ...progress, stage: "reading" }, "Lendo arquivo...")
+        );
+        setState({ message: "Interpretando CNAB240..." });
+        return parseCnab240Text(text, {
+          fileName: file.name,
+          onProgress: (progress) =>
+            updateImportProgress({ ...progress, stage: "parsing" }, "Interpretando CNAB240..."),
+        });
+      });
+      setState({
+        loading: true,
+        progress: { current: 1, total: 1, stage: "finalizing" },
+        message: "Finalizando visualizacao...",
+      });
+      state.parseResult = parsed;
+      state.query = "";
+      state.page = 1;
+      state.selectedPayment = parsed.payments[0] || null;
+      applyFilters();
+      setState({
+        loading: false,
+        progress: null,
+        message: `${parsed.counts.total} registros importados.`,
+      });
+    } catch (error) {
+      setState({
+        loading: false,
+        progress: null,
+        message: `Falha ao ler arquivo: ${error.message || error}`,
+      });
+    }
+  }
+
+  function bindEvents() {
+    root.querySelector("#file-input")?.addEventListener("change", (event) => {
+      handleFile(event.target.files?.[0]);
+      event.target.value = "";
+    });
+
+    const dropZone = root.querySelector(".drop-zone");
+    dropZone?.addEventListener("dragover", (event) => {
+      event.preventDefault();
+      dropZone.classList.add("dragging");
+    });
+    dropZone?.addEventListener("dragleave", () => dropZone.classList.remove("dragging"));
+    dropZone?.addEventListener("drop", (event) => {
+      event.preventDefault();
+      dropZone.classList.remove("dragging");
+      handleFile(event.dataTransfer.files?.[0]);
+    });
+
+    root.querySelector("#search")?.addEventListener("input", (event) => {
+      state.query = event.target.value;
+      state.page = 1;
+      clearTimeout(state.searchTimer);
+      state.searchTimer = setTimeout(() => {
+        applyFilters();
+        renderMovementsOnly();
+      }, 80);
+    });
+
+    root.querySelector("#occurrence-filter")?.addEventListener("change", (event) => {
+      state.occurrenceFilter = event.target.value;
+      state.page = 1;
+      applyFilters();
+      renderMovementsOnly();
+    });
+
+    root.querySelector("#page-size")?.addEventListener("change", (event) => {
+      state.pageSize = Number(event.target.value);
+      state.page = 1;
+      applyFilters();
+      renderMovementsOnly();
+    });
+
+    root.querySelectorAll("[data-view]").forEach((button) => {
+      button.addEventListener("click", () => setState({ activeView: button.dataset.view }));
+    });
+
+    root.querySelector("#movements-content")?.addEventListener("click", (event) => {
+      const pageButton = event.target.closest("[data-page]");
+      if (pageButton) {
+        state.page = Number(pageButton.dataset.page);
+        renderMovementsOnly();
+        return;
+      }
+
+      const row = event.target.closest("[data-select-payment]");
+      if (row) {
+        const payment = state.filteredPayments.find((item) => item.id === row.dataset.selectPayment);
+        setState({ selectedPayment: payment || null });
+      }
+    });
+
+    root.querySelector("#theme-toggle")?.addEventListener("click", () => {
+      state.isDark = !state.isDark;
+      localStorage.setItem("cnab-theme", state.isDark ? "dark" : "light");
+      render();
+    });
+
+    root.querySelector("#export-csv")?.addEventListener("click", () => {
+      if (state.filteredPayments.length) exportPaymentsCsv(state.filteredPayments);
+    });
+
+    root.querySelector("#copy-line")?.addEventListener("click", async () => {
+      if (!state.selectedPayment) return;
+      await copyText(formatPaymentLine(state.selectedPayment));
+      setState({ message: "Linha formatada copiada." });
+    });
+
+    root.querySelector("#close-details")?.addEventListener("click", () => setState({ selectedPayment: null }));
+  }
+
+  function progressBar() {
+    if (!state.loading || !state.progress?.total) return "";
+    const pct = Math.min(100, Math.round((state.progress.current / state.progress.total) * 100));
+    return `<div class="progress"><span style="width:${pct}%"></span></div>`;
+  }
+
+  function statCards() {
+    const result = state.parseResult;
+    const totalValue = result ? formatMoneyFromCents(String(Math.round(result.totals.value * 100)).padStart(3, "0")) : "R$ 0,00";
+    return `
+      <div class="stats-grid">
+        ${stat("Registros", result?.counts.total || 0, "Total lido do arquivo")}
+        ${stat("Pagamentos", result?.totals.payments || 0, "Segmentos A agrupados")}
+        ${stat("Valor", totalValue, "Soma dos pagamentos")}
+        ${stat("Erros", result?.totals.occurrences || 0, "Ocorrencias diferentes de 00")}
       </div>
-    </div>
+    `;
+  }
 
-    <script src="./app.js"></script>
+  function stat(label, value, hint) {
+    return `<section class="stat"><span>${label}</span><strong>${value}</strong><small>${hint}</small></section>`;
+  }
+
+  function sidebar() {
+    const result = state.parseResult;
+    const segments = result?.counts.bySegment || {};
+    return `
+      <aside class="sidebar">
+        <div class="brand">
+          <span class="brand-mark">240</span>
+          <div><strong>CNAB Viewer</strong><small>Local e offline</small></div>
+        </div>
+        <label class="drop-zone">
+          <input id="file-input" type="file" accept=".txt,.rem,.ret,*/*" />
+          <span class="icon">${icons.upload}</span>
+          <strong>Selecionar CNAB</strong>
+          <small>ou arraste .txt, .rem, .ret</small>
+        </label>
+        ${progressBar()}
+        <nav class="nav">
+          ${navButton("movimentos", icons.table, "Movimentos")}
+          ${navButton("estrutura", icons.file, "Estrutura")}
+          ${navButton("validacao", icons.warning, "Validacao")}
+        </nav>
+        <div class="side-section">
+          <span class="side-title">Segmentos</span>
+          ${["A", "B"].map((seg) => `<div class="side-row"><span>Segmento ${seg}</span><strong>${segments[seg] || 0}</strong></div>`).join("")}
+        </div>
+        <button class="ghost-button" id="theme-toggle" title="Alternar tema">
+          <span class="icon">${state.isDark ? icons.sun : icons.moon}</span>
+          ${state.isDark ? "Tema claro" : "Tema escuro"}
+        </button>
+      </aside>
+    `;
+  }
+
+  function navButton(view, icon, label) {
+    return `<button class="${state.activeView === view ? "active" : ""}" data-view="${view}"><span class="icon">${icon}</span>${label}</button>`;
+  }
+
+  function toolbar() {
+    return `
+      <div class="toolbar">
+        <div class="search-box">
+          <span class="icon">${icons.search}</span>
+          <input id="search" value="${escapeHtml(state.query)}" placeholder="Buscar por nome, CPF/CNPJ, banco, agencia, conta, valor, documento..." />
+        </div>
+        <select id="occurrence-filter" aria-label="Filtro de ocorrencias">
+          <option value="todos" ${state.occurrenceFilter === "todos" ? "selected" : ""}>Todos os retornos</option>
+          <option value="com" ${state.occurrenceFilter === "com" ? "selected" : ""}>Com erro</option>
+          <option value="sem" ${state.occurrenceFilter === "sem" ? "selected" : ""}>Sem erro</option>
+        </select>
+        <select id="page-size" aria-label="Itens por pagina">
+          ${pageSizeOptions.map((size) => `<option value="${size}" ${state.pageSize === size ? "selected" : ""}>${size}/pag</option>`).join("")}
+        </select>
+        <button class="icon-button" id="export-csv" title="Exportar CSV" ${state.filteredPayments.length ? "" : "disabled"}>${icons.download}</button>
+      </div>
+    `;
+  }
+
+  function movementsContent() {
+    const totalPages = Math.max(1, Math.ceil(state.filteredPayments.length / state.pageSize));
+    const start = (state.page - 1) * state.pageSize;
+    const pageItems = state.filteredPayments.slice(start, start + state.pageSize);
+    return `
+      <div class="table-shell">
+        <table>
+          <thead>
+            <tr>
+              <th>Linha</th><th>Nome favorecido</th><th>CPF/CNPJ</th><th>Banco</th><th>Agencia</th><th>Conta</th><th>Valor</th><th>Documento</th><th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${pageItems.map(paymentRow).join("") || `<tr><td colspan="9" class="muted-cell">Nenhum pagamento encontrado.</td></tr>`}
+          </tbody>
+        </table>
+      </div>
+      <div class="pagination">
+        <span>${state.filteredPayments.length} pagamentos filtrados</span>
+        <div>
+          <button data-page="${Math.max(1, state.page - 1)}" ${state.page === 1 ? "disabled" : ""}>Anterior</button>
+          <strong>${state.page} / ${totalPages}</strong>
+          <button data-page="${Math.min(totalPages, state.page + 1)}" ${state.page === totalPages ? "disabled" : ""}>Proxima</button>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderMovementsOnly() {
+    const container = root.querySelector("#movements-content");
+    if (!container || state.activeView !== "movimentos") {
+      render();
+      return;
+    }
+
+    container.innerHTML = movementsContent();
+    const exportButton = root.querySelector("#export-csv");
+    if (exportButton) exportButton.disabled = !state.filteredPayments.length;
+  }
+
+  function movementsView() {
+    if (!state.parseResult) return emptyState();
+    return `
+      ${toolbar()}
+      <div id="movements-content">${movementsContent()}</div>
+    `;
+  }
+
+  function paymentRow(payment) {
+    const selected = state.selectedPayment?.id === payment.id ? "selected" : "";
+    const issue = payment.hasOccurrenceError || payment.warnings.length ? "issue" : "";
+    const occurrenceLabel = payment.hasOccurrenceError ? payment.occurrences : "OK";
+    const tooltip = payment.occurrenceDescription || "Sem ocorrencias";
+    return `
+      <tr class="${selected} ${issue}" data-select-payment="${payment.id}" title="${escapeHtml(tooltip)}">
+        <td>${payment.lineNumber}</td>
+        <td><strong>${escapeHtml(payment.favoredName || "Sem nome")}</strong><small>Lote ${payment.lot} Seq ${payment.sequence}</small></td>
+        <td>${escapeHtml(payment.cpfCnpj || "-")}</td>
+        <td>${escapeHtml(payment.bank)}<small>${escapeHtml(payment.bankName)}</small></td>
+        <td>${escapeHtml(payment.agency || "-")}</td>
+        <td>${escapeHtml(payment.account || "-")}${payment.accountDigit ? `-${escapeHtml(payment.accountDigit)}` : ""}</td>
+        <td><strong>${escapeHtml(payment.amountFormatted || "-")}</strong><small>${escapeHtml(payment.paymentDate || "")}</small></td>
+        <td>${escapeHtml(payment.documentNumber || payment.ourNumber || "-")}</td>
+        <td><span class="badge ${issue ? "warn" : "ok"}">${escapeHtml(occurrenceLabel)}</span></td>
+      </tr>
+    `;
+  }
+
+  function structureView() {
+    if (!state.parseResult) return emptyState();
+    const result = state.parseResult;
+    return `
+      <div class="cards-grid">
+        ${recordCard("Header do arquivo", result.headers.file)}
+        ${result.headers.lots.map((record, index) => recordCard(`Header lote ${index + 1}`, record)).join("")}
+        ${result.trailers.lots.map((record, index) => recordCard(`Trailer lote ${index + 1}`, record)).join("")}
+        ${recordCard("Trailer do arquivo", result.trailers.file)}
+      </div>
+    `;
+  }
+
+  function recordCard(title, record) {
+    if (!record) return `<section class="info-card"><h3>${title}</h3><p class="muted">Nao encontrado.</p></section>`;
+    return `
+      <section class="info-card">
+        <h3>${title}</h3>
+        <div class="field-grid">
+          ${(record.parsed.fields || []).map((item) => `<div><span>${escapeHtml(item.label)}</span><strong>${escapeHtml(item.value || "-")}</strong></div>`).join("")}
+        </div>
+      </section>
+    `;
+  }
+
+  function validationView() {
+    if (!state.parseResult) return emptyState();
+    const warnings = state.parseResult.warnings;
+    return `
+      <section class="info-card">
+        <h3>Validacao basica</h3>
+        <p class="muted">${warnings.length ? `${warnings.length} alertas encontrados.` : "Nenhum alerta basico encontrado."}</p>
+        <div class="warning-list">
+          ${warnings.map((item) => `<div><strong>Linha ${item.lineNumber}</strong><span>${item.messages.map(escapeHtml).join(" ")}</span></div>`).join("")}
+        </div>
+      </section>
+    `;
+  }
+
+  function detailsPanel() {
+    const payment = state.selectedPayment;
+    if (!payment) return "";
+    const records = [payment.segmentARecord, payment.segmentBRecord].filter(Boolean);
+    const occurrenceBlock = payment.hasOccurrenceError
+      ? `<div class="occurrence-alert">
+          <span>Ocorrencia de retorno</span>
+          <strong>${escapeHtml(payment.occurrences)}</strong>
+          <p>${escapeHtml(payment.occurrenceDescription || "Descricao nao cadastrada")}</p>
+        </div>`
+      : "";
+    return `
+      <aside class="details-panel">
+        <div class="details-header">
+          <div><span>Registro selecionado</span><strong>${escapeHtml(payment.favoredName || "Pagamento")}</strong></div>
+          <button class="icon-button" id="close-details" title="Fechar">${icons.close}</button>
+        </div>
+        <div class="details-actions">
+          <button id="copy-line"><span class="icon">${icons.copy}</span>Copiar linha formatada</button>
+        </div>
+        <div class="summary-list">
+          <div><span>CPF/CNPJ</span><strong>${escapeHtml(payment.cpfCnpj || "-")}</strong></div>
+          <div><span>Valor</span><strong>${escapeHtml(payment.amountFormatted || "-")}</strong></div>
+          <div><span>Banco</span><strong>${escapeHtml(`${payment.bank} ${payment.bankName}`.trim())}</strong></div>
+          <div><span>Conta</span><strong>${escapeHtml(payment.account || "-")}</strong></div>
+          <div><span>Ocorrencias</span><strong>${escapeHtml(payment.hasOccurrenceError ? payment.occurrences : "Sem erro")}</strong></div>
+          <div><span>Descricao</span><strong>${escapeHtml(payment.occurrenceDescription || "Sem ocorrencias")}</strong></div>
+        </div>
+        ${occurrenceBlock}
+        ${records.map(detailRecord).join("")}
+      </aside>
+    `;
+  }
+
+  function detailRecord(record) {
+    const fields = hydrateCnabRecordFields(record);
+    return `
+      <section class="detail-record">
+        <h3>Linha ${record.lineNumber} - ${record.typeLabel}${record.segment ? ` ${record.segment}` : ""}</h3>
+        <div class="field-table">
+          ${fields.map((item) => `
+            <div>
+              <span>${item.start}-${item.end}</span>
+              <strong>${escapeHtml(item.label)}</strong>
+              <em>${escapeHtml(item.value || "-")}</em>
+              <code>${escapeHtml(item.raw)}</code>
+            </div>
+          `).join("")}
+        </div>
+        <details>
+          <summary>Valor bruto do arquivo</summary>
+          <pre>${escapeHtml(record.raw)}</pre>
+        </details>
+      </section>
+    `;
+  }
+
+  function emptyState() {
+    return `
+      <section class="empty">
+        <span class="icon">${icons.file}</span>
+        <h2>Abra um arquivo CNAB240</h2>
+        <p>O processamento acontece apenas no navegador, com leitura local e sem envio de dados.</p>
+      </section>
+    `;
+  }
+
+  function mainView() {
+    if (state.activeView === "estrutura") return structureView();
+    if (state.activeView === "validacao") return validationView();
+    return movementsView();
+  }
+
+  function render() {
+    document.documentElement.dataset.theme = state.isDark ? "dark" : "light";
+    root.innerHTML = `
+      <div class="app-shell">
+        ${sidebar()}
+        <main class="main">
+          <header class="topbar">
+            <div>
+              <span class="eyebrow">${state.parseResult?.layout || "Visualizador CNAB240"}</span>
+              <h1>${state.parseResult?.fileName ? escapeHtml(state.parseResult.fileName) : "Analise local de remessa e retorno"}</h1>
+            </div>
+            <p>${escapeHtml(state.message || "Pronto para importar um arquivo.")}</p>
+          </header>
+          ${statCards()}
+          ${mainView()}
+        </main>
+        ${detailsPanel()}
+      </div>
+    `;
+    bindEvents();
+  }
+
+  render();
+}
+
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+
+/* src/main.js */
+createApp(document.querySelector("#app"));
+
+})();
+    </script>
   </body>
 </html>
