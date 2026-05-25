@@ -381,6 +381,10 @@ td {
   vertical-align: middle;
 }
 
+.text-right {
+  text-align: right;
+}
+
 th {
   position: sticky;
   top: 0;
@@ -1855,7 +1859,7 @@ function createApp(root) {
         <table>
           <thead>
             <tr>
-              <th>Linha</th><th>Nome favorecido</th><th>CPF/CNPJ</th><th>Banco</th><th>Agencia</th><th>Conta</th><th>Valor</th><th>Documento</th><th>Status</th>
+              <th>Linha</th><th>Nome favorecido</th><th>CPF/CNPJ</th><th>Banco</th><th>Agencia</th><th>Conta</th><th class="text-right">Valor</th><th>Documento</th><th>Status</th>
             </tr>
           </thead>
           <tbody>
@@ -1907,7 +1911,7 @@ function createApp(root) {
         <td>${escapeHtml(payment.bank)}<small>${escapeHtml(payment.bankName)}</small></td>
         <td>${escapeHtml(payment.agency || "-")}</td>
         <td>${escapeHtml(payment.account || "-")}${payment.accountDigit ? `-${escapeHtml(payment.accountDigit)}` : ""}</td>
-        <td><strong>${escapeHtml(payment.amountFormatted || "-")}</strong><small>${escapeHtml(payment.paymentDate || "")}</small></td>
+        <td class="text-right"><strong>${escapeHtml(payment.amountFormatted || "-")}</strong><small>${escapeHtml(payment.paymentDate || "")}</small></td>
         <td>${escapeHtml(payment.documentNumber || payment.ourNumber || "-")}</td>
         <td><span class="badge ${issue ? "warn" : "ok"}">${escapeHtml(occurrenceLabel)}</span></td>
       </tr>
