@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="pt-BR">
+<html lang="pt-BR" data-theme="moderno">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -28,8 +28,9 @@
   --warn-bg: #fffaeb;
   --shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
   --radius: 8px;
-  font-family:
-    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-main: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-family: var(--font-main);
 }
 
 :root[data-theme="dark"] {
@@ -50,6 +51,73 @@
   --warn: #fbbf24;
   --warn-bg: #3c2d15;
   --shadow: 0 18px 46px rgba(0, 0, 0, 0.24);
+}
+
+:root[data-theme="moderno"] {
+  color-scheme: light;
+  --bg: #f8fafc;
+  --panel: #ffffff;
+  --panel-2: #f1f5f9;
+  --text: #0f172a;
+  --muted: #64748b;
+  --line: #cbd5e1;
+  --line-soft: #e2e8f0;
+  --primary: #2563eb;
+  --primary-2: #1e40af;
+  --danger: #dc2626;
+  --danger-bg: #fef2f2;
+  --ok: #16a34a;
+  --ok-bg: #f0fdf4;
+  --warn: #d97706;
+  --warn-bg: #fffbeb;
+  --shadow: 0 10px 25px rgba(15, 23, 42, 0.05);
+}
+
+:root[data-theme="terminal"] {
+  color-scheme: dark;
+  --bg: #000000;
+  --panel: #051005;
+  --panel-2: #0a1f0a;
+  --text: #33ff33;
+  --muted: #1e801e;
+  --line: #145214;
+  --line-soft: #0a290a;
+  --primary: #ffff00;
+  --primary-2: #ccff00;
+  --danger: #ff3333;
+  --danger-bg: #330000;
+  --ok: #33ff33;
+  --ok-bg: #003300;
+  --warn: #ffcc00;
+  --warn-bg: #332900;
+  --shadow: none;
+  --font-main: var(--font-mono);
+  --radius: 0px;
+}
+
+:root[data-theme="terminal"] .brand-mark {
+  background: var(--primary);
+  color: #000;
+}
+
+:root[data-theme="cyberpunk"] {
+  color-scheme: dark;
+  --bg: #09090b;
+  --panel: #18181b;
+  --panel-2: #27272a;
+  --text: #f4f4f5;
+  --muted: #a1a1aa;
+  --line: #d946ef;
+  --line-soft: #3f3f46;
+  --primary: #06b6d4;
+  --primary-2: #a855f7;
+  --danger: #f43f5e;
+  --danger-bg: #4c0519;
+  --ok: #2dd4bf;
+  --ok-bg: #042f2e;
+  --warn: #eab308;
+  --warn-bg: #422006;
+  --shadow: 0 0 20px rgba(6, 182, 212, 0.4);
 }
 
 * {
@@ -139,11 +207,23 @@ button:disabled {
   display: grid;
   width: 44px;
   height: 44px;
+  flex: 0 0 44px;
   place-items: center;
   border-radius: 8px;
   background: linear-gradient(135deg, var(--primary), var(--primary-2));
   color: white;
   font-weight: 800;
+  overflow: hidden;
+}
+
+.brand-mark-icon {
+  display: block;
+  height: 44px;
+  width: auto;
+  max-width: 120px;
+  flex: 0 0 auto;
+  object-fit: contain;
+  border-radius: 6px;
 }
 
 .brand strong,
@@ -240,6 +320,22 @@ td small,
   text-transform: uppercase;
 }
 
+#theme-select {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  color: var(--text);
+  font-size: 13px;
+  outline: none;
+  padding: 2px 0;
+}
+
+#theme-select option {
+  background: #1e1e2e;
+  color: #e2e8f0;
+}
+
 .side-row,
 .summary-list div {
   display: flex;
@@ -319,7 +415,7 @@ td small,
 
 .toolbar {
   display: grid;
-  grid-template-columns: minmax(240px, 1fr) auto auto auto;
+  grid-template-columns: minmax(240px, 1fr) repeat(4, auto);
   gap: 10px;
   margin-bottom: 12px;
 }
@@ -542,6 +638,53 @@ tbody tr.issue {
 .warning-list strong,
 .warning-list span {
   display: block;
+}
+
+.hex-container {
+  overflow-x: auto;
+  background: var(--panel-2);
+  padding: 16px;
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+  font-family: var(--font-mono);
+  font-size: 14px;
+  line-height: 1.5;
+  white-space: pre;
+}
+
+.hex-ruler {
+  color: var(--muted);
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 8px;
+  padding-bottom: 8px;
+}
+
+.hex-line {
+  display: block;
+  cursor: crosshair;
+}
+
+.hex-field {
+  display: inline-block;
+}
+
+.hex-field:hover {
+  background: var(--primary);
+  color: var(--bg);
+}
+
+.hex-line:hover .hex-field:not(:hover) {
+  opacity: 0.5;
+}
+
+.febraban-tip {
+  font-size: 13px;
+  background: var(--ok-bg);
+  color: var(--ok);
+  padding: 8px 12px;
+  border-radius: var(--radius);
+  margin-bottom: 16px;
+  border-left: 3px solid var(--ok);
 }
 
 .details-panel {
@@ -810,15 +953,34 @@ const registrationTypes = {
 
 const bankNames = {
   "001": "Banco do Brasil",
+  "003": "Banco da Amazonia",
+  "004": "Banco do Nordeste",
+  "021": "Banestes",
   "033": "Santander",
+  "041": "Banrisul",
+  "070": "BRB",
   "077": "Inter",
   "104": "Caixa",
+  "136": "Unicred",
+  "197": "Stone",
+  "208": "BTG Pactual",
+  "212": "Banco Original",
   "237": "Bradesco",
+  "246": "Banco ABC Brasil",
+  "260": "Nubank",
+  "290": "PagBank",
+  "318": "Banco BMG",
+  "336": "Banco C6",
   "341": "Itau",
+  "380": "PicPay",
+  "389": "Banco Mercantil",
+  "422": "Banco Safra",
+  "623": "Banco Pan",
+  "655": "Banco BV",
+  "707": "Banco Daycoval",
   "748": "Sicredi",
   "756": "Sicoob",
 };
-
 
 /* src/utils/format.js */
 function onlyDigits(value) {
@@ -910,7 +1072,6 @@ function csvEscape(value) {
   if (/["\n;]/.test(text)) return `"${text.replace(/"/g, '""')}"`;
   return text;
 }
-
 
 /* src/parser/layouts/bbCnab240.js */
 function slice(line, start, end) {
@@ -1155,7 +1316,6 @@ const bbCnab240Layout = {
   },
 };
 
-
 /* src/parser/cnab240Parser.js */
 const layouts = [bbCnab240Layout];
 
@@ -1271,7 +1431,7 @@ function buildPaymentSearch(payment) {
   );
 }
 
-const nonErrorOccurrenceCodes = new Set(["00", "ZA"]);
+const nonErrorOccurrenceCodes = new Set(["00", "ZA", "BD"]);
 
 const occurrenceDescriptions = {
   "00": "Pagamento confirmado",
@@ -1300,6 +1460,7 @@ const occurrenceDescriptions = {
   AT: "Tipo/numero de inscricao do favorecido invalido",
   AU: "Logradouro do favorecido nao informado",
   AV: "Numero do local do favorecido nao informado",
+  BD: "Inclusão Efetuada com Sucesso",
   ZA: "Ocorrencia informativa tratada como sem erro",
 };
 
@@ -1396,7 +1557,7 @@ function summarize(result) {
 }
 
 function compactParsedResult(result) {
-  result.records = result.records.filter((record) => record.type !== "3");
+  // result.records = result.records.filter((record) => record.type !== "3");
   return result;
 }
 
@@ -1454,76 +1615,8 @@ function readFileAsText(file, onProgress) {
   });
 }
 
-
-/* src/services/exportService.js */
-function formatCsvNumber(value) {
-  const number = Number(value || 0);
-  return Number.isFinite(number) ? number.toFixed(2).replace(".", ",") : "";
-}
-
-function exportPaymentsCsv(payments, fileName = "cnab240-pagamentos.csv") {
-  const headers = [
-    "Linha",
-    "Lote",
-    "Sequencial",
-    "Nome",
-    "CPF/CNPJ",
-    "Banco",
-    "Agencia",
-    "Conta",
-    "Valor",
-    "Data pagamento",
-    "Documento",
-    "Nosso numero",
-    "Seu numero",
-    "Ocorrencias",
-    "Descricao ocorrencias",
-  ];
-
-  const rows = payments.map((item) => [
-    item.lineNumber,
-    item.lot,
-    item.sequence,
-    item.favoredName,
-    item.cpfCnpj,
-    `${item.bank} ${item.bankName}`.trim(),
-    item.agency,
-    `${item.account}-${item.accountDigit || ""}`.replace(/-$/, ""),
-    formatCsvNumber(item.amount),
-    item.paymentDate,
-    item.documentNumber,
-    item.ourNumber,
-    item.yourNumber,
-    item.occurrences,
-    item.occurrenceDescription,
-  ]);
-
-  const csv = [headers, ...rows].map((row) => row.map(csvEscape).join(";")).join("\n");
-  downloadText(fileName, csv, "text/csv;charset=utf-8");
-}
-
-function formatPaymentLine(payment) {
-  return [
-    `Linha ${payment.lineNumber}`,
-    `Lote ${payment.lot}`,
-    payment.favoredName || "Sem nome",
-    payment.cpfCnpj || "CPF/CNPJ nao informado",
-    `${payment.bank} ${payment.bankName}`.trim(),
-    `Ag ${payment.agency}`,
-    `Conta ${payment.account}${payment.accountDigit ? `-${payment.accountDigit}` : ""}`,
-    payment.amountFormatted,
-    payment.paymentDate ? `Pgto ${payment.paymentDate}` : "",
-    payment.documentNumber ? `Doc ${payment.documentNumber}` : "",
-    payment.hasOccurrenceError ? `Ocorrencias ${payment.occurrences}` : "Sem erro",
-    payment.occurrenceDescription || "",
-  ]
-    .filter(Boolean)
-    .join(" | ");
-}
-
-
 /* src/services/parserWorkerSource.js */
-const parserWorkerSource = "/* src/models/cnabFields.js */\nconst recordKinds = {\n  \"0\": \"Header do arquivo\",\n  \"1\": \"Header de lote\",\n  \"3\": \"Detalhe\",\n  \"5\": \"Trailer de lote\",\n  \"9\": \"Trailer do arquivo\",\n};\n\nconst segmentLabels = {\n  A: \"Pagamento\",\n  B: \"Complemento do favorecido\",\n};\n\nconst movementTypes = {\n  \"0\": \"Inclusao\",\n  \"3\": \"Baixa\",\n  \"5\": \"Alteracao\",\n  \"9\": \"Exclusao\",\n};\n\nconst paymentForms = {\n  \"01\": \"Credito em conta corrente/salario\",\n  \"03\": \"DOC/TED\",\n  \"05\": \"Credito em poupanca\",\n  \"30\": \"Liquidacao de titulos\",\n  \"41\": \"TED outra titularidade\",\n  \"43\": \"TED mesma titularidade\",\n  \"45\": \"PIX transferencia\",\n};\n\nconst registrationTypes = {\n  \"1\": \"CPF\",\n  \"2\": \"CNPJ\",\n};\n\nconst bankNames = {\n  \"001\": \"Banco do Brasil\",\n  \"033\": \"Santander\",\n  \"077\": \"Inter\",\n  \"104\": \"Caixa\",\n  \"237\": \"Bradesco\",\n  \"341\": \"Itau\",\n  \"748\": \"Sicredi\",\n  \"756\": \"Sicoob\",\n};\n\n\n/* src/utils/format.js */\nfunction onlyDigits(value) {\n  return String(value || \"\").replace(/\\D/g, \"\");\n}\n\nfunction cleanText(value) {\n  return String(value || \"\").replace(/\\s+/g, \" \").trim();\n}\n\nfunction stripZeros(value) {\n  const cleaned = onlyDigits(value).replace(/^0+/, \"\");\n  return cleaned || \"0\";\n}\n\nfunction formatMoneyFromCents(raw) {\n  const digits = onlyDigits(raw);\n  if (!digits) return \"\";\n  const cents = Number.parseInt(digits, 10);\n  return new Intl.NumberFormat(\"pt-BR\", {\n    style: \"currency\",\n    currency: \"BRL\",\n  }).format(cents / 100);\n}\n\nfunction centsToNumber(raw) {\n  const digits = onlyDigits(raw);\n  return digits ? Number.parseInt(digits, 10) / 100 : 0;\n}\n\nfunction formatDate(raw) {\n  const digits = onlyDigits(raw);\n  if (digits.length !== 8 || digits === \"00000000\") return \"\";\n  const day = digits.slice(0, 2);\n  const month = digits.slice(2, 4);\n  const year = digits.slice(4, 8);\n  return `${day}/${month}/${year}`;\n}\n\nfunction formatCpfCnpj(type, value) {\n  const digits = onlyDigits(value);\n  if (type === \"1\" \u0026\u0026 digits.length \u003e= 11) {\n    const cpf = digits.slice(-11);\n    return cpf.replace(/(\\d{3})(\\d{3})(\\d{3})(\\d{2})/, \"$1.$2.$3-$4\");\n  }\n  if (type === \"2\" \u0026\u0026 digits.length \u003e= 14) {\n    const cnpj = digits.slice(-14);\n    return cnpj.replace(/(\\d{2})(\\d{3})(\\d{3})(\\d{4})(\\d{2})/, \"$1.$2.$3/$4-$5\");\n  }\n  return stripZeros(digits);\n}\n\nfunction normalizeSearch(value) {\n  return String(value || \"\")\n    .normalize(\"NFD\")\n    .replace(/[\\u0300-\\u036f]/g, \"\")\n    .toLowerCase();\n}\n\nfunction downloadText(filename, content, mime = \"text/plain;charset=utf-8\") {\n  const blob = new Blob([content], { type: mime });\n  const url = URL.createObjectURL(blob);\n  const link = document.createElement(\"a\");\n  link.href = url;\n  link.download = filename;\n  link.click();\n  URL.revokeObjectURL(url);\n}\n\nasync function copyText(text) {\n  if (navigator.clipboard?.writeText) {\n    await navigator.clipboard.writeText(text);\n    return;\n  }\n\n  const area = document.createElement(\"textarea\");\n  area.value = text;\n  area.setAttribute(\"readonly\", \"\");\n  area.style.position = \"fixed\";\n  area.style.left = \"-9999px\";\n  document.body.appendChild(area);\n  area.select();\n  document.execCommand(\"copy\");\n  area.remove();\n}\n\nfunction csvEscape(value) {\n  const text = String(value ?? \"\");\n  if (/[\"\\n;]/.test(text)) return `\"${text.replace(/\"/g, \u0027\"\"\u0027)}\"`;\n  return text;\n}\n\n\n/* src/parser/layouts/bbCnab240.js */\nfunction slice(line, start, end) {\n  return line.slice(start - 1, end);\n}\n\nfunction field(label, start, end, raw, value = cleanText(raw)) {\n  return { label, start, end, raw, value };\n}\n\nfunction bankName(code) {\n  return bankNames[code] || `Banco ${code}`;\n}\n\nconst bbCnab240Layout = {\n  id: \"bb-cnab240\",\n  name: \"CNAB240 Banco do Brasil / FEBRABAN\",\n\n  parseHeaderArquivo(line) {\n    const bank = slice(line, 1, 3);\n    const companyName = slice(line, 73, 102);\n    const fileDate = slice(line, 144, 151);\n    const fileTime = slice(line, 152, 157);\n    const sequence = slice(line, 158, 163);\n\n    return {\n      bank,\n      bankName: bankName(bank),\n      companyName: cleanText(companyName),\n      fileDate: formatDate(fileDate),\n      fileTime: fileTime.replace(/(\\d{2})(\\d{2})(\\d{2})/, \"$1:$2:$3\"),\n      sequence: stripZeros(sequence),\n      fields: [\n        field(\"Banco\", 1, 3, bank, `${bank} - ${bankName(bank)}`),\n        field(\"Tipo de registro\", 8, 8, slice(line, 8, 8), \"Header do arquivo\"),\n        field(\"Nome da empresa\", 73, 102, companyName),\n        field(\"Data de geracao\", 144, 151, fileDate, formatDate(fileDate)),\n        field(\"Hora de geracao\", 152, 157, fileTime),\n        field(\"Sequencia do arquivo\", 158, 163, sequence, stripZeros(sequence)),\n      ],\n    };\n  },\n\n  parseHeaderLote(line) {\n    const bank = slice(line, 1, 3);\n    const lot = slice(line, 4, 7);\n    const serviceType = slice(line, 10, 11);\n    const paymentForm = slice(line, 12, 13);\n    const companyName = slice(line, 73, 102);\n    const address = slice(line, 143, 172);\n    const city = slice(line, 193, 212);\n    const state = slice(line, 221, 222);\n\n    return {\n      bank,\n      bankName: bankName(bank),\n      lot: stripZeros(lot),\n      serviceType,\n      paymentForm,\n      paymentFormLabel: paymentForms[paymentForm] || paymentForm,\n      companyName: cleanText(companyName),\n      city: cleanText(city),\n      state: cleanText(state),\n      fields: [\n        field(\"Banco\", 1, 3, bank, `${bank} - ${bankName(bank)}`),\n        field(\"Lote\", 4, 7, lot, stripZeros(lot)),\n        field(\"Tipo de servico\", 10, 11, serviceType),\n        field(\"Forma de lancamento\", 12, 13, paymentForm, paymentForms[paymentForm] || paymentForm),\n        field(\"Nome da empresa\", 73, 102, companyName),\n        field(\"Endereco\", 143, 172, address),\n        field(\"Cidade\", 193, 212, city),\n        field(\"UF\", 221, 222, state),\n      ],\n    };\n  },\n\n  parseTrailerLote(line) {\n    const lot = slice(line, 4, 7);\n    const records = slice(line, 18, 23);\n    const total = slice(line, 24, 41);\n    return {\n      lot: stripZeros(lot),\n      records: stripZeros(records),\n      totalValue: centsToNumber(total),\n      totalValueFormatted: formatMoneyFromCents(total),\n      fields: [\n        field(\"Lote\", 4, 7, lot, stripZeros(lot)),\n        field(\"Quantidade de registros\", 18, 23, records, stripZeros(records)),\n        field(\"Somatoria de valores\", 24, 41, total, formatMoneyFromCents(total)),\n      ],\n    };\n  },\n\n  parseTrailerArquivo(line) {\n    const lots = slice(line, 18, 23);\n    const records = slice(line, 24, 29);\n    return {\n      lots: stripZeros(lots),\n      records: stripZeros(records),\n      fields: [\n        field(\"Quantidade de lotes\", 18, 23, lots, stripZeros(lots)),\n        field(\"Quantidade de registros\", 24, 29, records, stripZeros(records)),\n      ],\n    };\n  },\n\n  parseSegmentA(line, includeFields = true) {\n    const bank = slice(line, 1, 3);\n    const lot = slice(line, 4, 7);\n    const sequence = slice(line, 9, 13);\n    const movementType = slice(line, 15, 15);\n    const instructionCode = slice(line, 16, 17);\n    const favoredBank = slice(line, 21, 23);\n    const agency = slice(line, 24, 28);\n    const agencyDigit = slice(line, 29, 29);\n    const account = slice(line, 30, 41);\n    const accountDigit = slice(line, 42, 42);\n    const accountComboDigit = slice(line, 43, 43);\n    const name = slice(line, 44, 73);\n    const documentNumber = slice(line, 74, 93);\n    const paymentDate = slice(line, 94, 101);\n    const amount = slice(line, 120, 134);\n    const ourNumber = slice(line, 135, 154);\n    const effectiveDate = slice(line, 155, 162);\n    const effectiveAmount = slice(line, 163, 177);\n    const yourNumber = slice(line, 178, 197);\n    const occurrences = slice(line, 231, 240);\n\n    const parsed = {\n      segment: \"A\",\n      segmentLabel: segmentLabels.A,\n      lot: stripZeros(lot),\n      sequence: stripZeros(sequence),\n      bank,\n      favoredBank,\n      favoredBankName: bankName(favoredBank),\n      agency: stripZeros(agency),\n      agencyDigit: cleanText(agencyDigit),\n      account: stripZeros(account),\n      accountDigit: cleanText(accountDigit),\n      accountComboDigit: cleanText(accountComboDigit),\n      favoredName: cleanText(name),\n      documentNumber: cleanText(documentNumber),\n      ourNumber: cleanText(ourNumber),\n      yourNumber: cleanText(yourNumber),\n      amount: centsToNumber(amount),\n      amountFormatted: formatMoneyFromCents(amount),\n      effectiveAmount: centsToNumber(effectiveAmount),\n      effectiveAmountFormatted: formatMoneyFromCents(effectiveAmount),\n      paymentDate: formatDate(paymentDate),\n      effectiveDate: formatDate(effectiveDate),\n      movementType,\n      movementLabel: movementTypes[movementType] || movementType,\n      instructionCode,\n      occurrences: cleanText(occurrences),\n    };\n\n    if (includeFields) {\n      parsed.fields = [\n        field(\"Data de pagamento\", 94, 101, paymentDate, formatDate(paymentDate)),\n        field(\"Valor\", 120, 134, amount, formatMoneyFromCents(amount)),\n        field(\"Banco favorecido\", 21, 23, favoredBank, `${favoredBank} - ${bankName(favoredBank)}`),\n        field(\"Agencia\", 24, 28, agency, stripZeros(agency)),\n        field(\"Conta\", 30, 41, account, stripZeros(account)),\n        field(\"DV conta\", 42, 42, accountDigit),\n        field(\"Banco do arquivo\", 1, 3, bank, `${bank} - ${bankName(bank)}`),\n        field(\"Lote\", 4, 7, lot, stripZeros(lot)),\n        field(\"Sequencial\", 9, 13, sequence, stripZeros(sequence)),\n        field(\"Segmento\", 14, 14, \"A\", \"A - Pagamento\"),\n        field(\"Movimento\", 15, 15, movementType, movementTypes[movementType] || movementType),\n        field(\"Instrucao\", 16, 17, instructionCode),\n        field(\"DV agencia\", 29, 29, agencyDigit),\n        field(\"DV ag/conta\", 43, 43, accountComboDigit),\n        field(\"Nome favorecido\", 44, 73, name),\n        field(\"Seu numero / documento\", 74, 93, documentNumber),\n        field(\"Nosso numero\", 135, 154, ourNumber),\n        field(\"Data efetiva\", 155, 162, effectiveDate, formatDate(effectiveDate)),\n        field(\"Valor efetivo\", 163, 177, effectiveAmount, formatMoneyFromCents(effectiveAmount)),\n        field(\"Informacao / seu numero\", 178, 197, yourNumber),\n        field(\"Ocorrencias\", 231, 240, occurrences),\n      ];\n    }\n\n    return parsed;\n  },\n\n  parseSegmentB(line, includeFields = true) {\n    const lot = slice(line, 4, 7);\n    const sequence = slice(line, 9, 13);\n    const registrationType = slice(line, 18, 18);\n    const registrationNumber = slice(line, 19, 32);\n    const address = slice(line, 33, 62);\n    const addressNumber = slice(line, 63, 67);\n    const complement = slice(line, 68, 82);\n    const district = slice(line, 83, 97);\n    const city = slice(line, 98, 117);\n    const postalCode = slice(line, 118, 125);\n    const state = slice(line, 126, 127);\n    const dueDate = slice(line, 128, 135);\n    const documentAmount = slice(line, 136, 150);\n\n    const parsed = {\n      segment: \"B\",\n      segmentLabel: segmentLabels.B,\n      lot: stripZeros(lot),\n      sequence: stripZeros(sequence),\n      registrationType,\n      registrationTypeLabel: registrationTypes[registrationType] || registrationType,\n      registrationNumber: formatCpfCnpj(registrationType, registrationNumber),\n      address: cleanText(address),\n      addressNumber: stripZeros(addressNumber),\n      complement: cleanText(complement),\n      district: cleanText(district),\n      city: cleanText(city),\n      state: cleanText(state),\n      postalCode: cleanText(postalCode),\n      dueDate: formatDate(dueDate),\n      documentAmount: centsToNumber(documentAmount),\n      documentAmountFormatted: formatMoneyFromCents(documentAmount),\n    };\n\n    if (includeFields) {\n      parsed.fields = [\n        field(\"Lote\", 4, 7, lot, stripZeros(lot)),\n        field(\"Sequencial\", 9, 13, sequence, stripZeros(sequence)),\n        field(\"Segmento\", 14, 14, \"B\", \"B - Complemento\"),\n        field(\"Tipo inscricao\", 18, 18, registrationType, registrationTypes[registrationType] || registrationType),\n        field(\"CPF/CNPJ\", 19, 32, registrationNumber, formatCpfCnpj(registrationType, registrationNumber)),\n        field(\"Endereco\", 33, 62, address),\n        field(\"Numero\", 63, 67, addressNumber, stripZeros(addressNumber)),\n        field(\"Complemento\", 68, 82, complement),\n        field(\"Bairro\", 83, 97, district),\n        field(\"Cidade\", 98, 117, city),\n        field(\"CEP\", 118, 125, postalCode),\n        field(\"UF\", 126, 127, state),\n        field(\"Vencimento\", 128, 135, dueDate, formatDate(dueDate)),\n        field(\"Valor do documento\", 136, 150, documentAmount, formatMoneyFromCents(documentAmount)),\n      ];\n    }\n\n    return parsed;\n  },\n};\n\n\n/* src/parser/cnab240Parser.js */\nconst layouts = [bbCnab240Layout];\n\nfunction waitFrame() {\n  return new Promise((resolve) =\u003e setTimeout(resolve, 0));\n}\n\nfunction detectLineEnding(text) {\n  return text.includes(\"\\r\\n\") ? \"\\r\\n\" : \"\\n\";\n}\n\nfunction detectType(line) {\n  return line[7] || \"\";\n}\n\nfunction detectSegment(line) {\n  return line[13] || \"\";\n}\n\nfunction makeRecord(line, lineNumber, layout, parsed = {}) {\n  const type = detectType(line);\n  const segment = detectSegment(line);\n  return {\n    id: `${lineNumber}-${type}-${segment || \"x\"}`,\n    lineNumber,\n    type,\n    typeLabel: recordKinds[type] || \"Registro desconhecido\",\n    segment,\n    raw: line,\n    length: line.length,\n    layout: layout.id,\n    parsed,\n    warnings: [],\n  };\n}\n\nfunction validateLine(record) {\n  if (record.length !== 240) {\n    record.warnings.push(`Registro com ${record.length} caracteres; esperado: 240.`);\n  }\n  if (!record.typeLabel || record.typeLabel === \"Registro desconhecido\") {\n    record.warnings.push(\"Tipo de registro nao reconhecido na posicao 8.\");\n  }\n  if (record.type === \"3\" \u0026\u0026 !record.segment) {\n    record.warnings.push(\"Segmento ausente na posicao 14.\");\n  }\n}\n\nfunction parseLine(line, lineNumber, layout, currentLot) {\n  const type = detectType(line);\n  const segment = detectSegment(line);\n  let parsed = {};\n\n  if (type === \"0\") parsed = layout.parseHeaderArquivo(line);\n  if (type === \"1\") parsed = layout.parseHeaderLote(line);\n  if (type === \"5\") parsed = layout.parseTrailerLote(line);\n  if (type === \"9\") parsed = layout.parseTrailerArquivo(line);\n  if (type === \"3\" \u0026\u0026 segment === \"A\") parsed = layout.parseSegmentA(line, false);\n  if (type === \"3\" \u0026\u0026 segment === \"B\") parsed = layout.parseSegmentB(line, false);\n\n  const record = makeRecord(line, lineNumber, layout, parsed);\n  validateLine(record);\n  if (currentLot) record.currentLot = currentLot;\n  return record;\n}\n\nfunction hydrateCnabRecordFields(record) {\n  if (record.parsed?.fields?.length) return record.parsed.fields;\n  if (!record?.raw) return [];\n\n  const layout = layouts[0];\n  let parsed = {};\n  if (record.type === \"3\" \u0026\u0026 record.segment === \"A\") parsed = layout.parseSegmentA(record.raw);\n  if (record.type === \"3\" \u0026\u0026 record.segment === \"B\") parsed = layout.parseSegmentB(record.raw);\n  if (record.type === \"0\") parsed = layout.parseHeaderArquivo(record.raw);\n  if (record.type === \"1\") parsed = layout.parseHeaderLote(record.raw);\n  if (record.type === \"5\") parsed = layout.parseTrailerLote(record.raw);\n  if (record.type === \"9\") parsed = layout.parseTrailerArquivo(record.raw);\n\n  record.parsed = { ...(record.parsed || {}), fields: parsed.fields || [] };\n  return record.parsed.fields;\n}\n\nfunction addRecord(result, record) {\n  result.records.push(record);\n  result.counts.total += 1;\n  result.counts.byType[record.typeLabel] = (result.counts.byType[record.typeLabel] || 0) + 1;\n  if (record.segment) {\n    result.counts.bySegment[record.segment] = (result.counts.bySegment[record.segment] || 0) + 1;\n  }\n  if (record.warnings.length) {\n    result.warnings.push({ lineNumber: record.lineNumber, messages: record.warnings });\n  }\n}\n\nfunction buildPaymentSearch(payment) {\n  return normalizeSearch(\n    [\n      payment.favoredName,\n      payment.cpfCnpj,\n      payment.bank,\n      payment.bankName,\n      payment.agency,\n      payment.account,\n      payment.amountFormatted,\n      payment.amount,\n      payment.documentNumber,\n      payment.ourNumber,\n      payment.yourNumber,\n      payment.occurrences,\n      payment.occurrenceDescription,\n    ].join(\" \")\n  );\n}\n\nconst nonErrorOccurrenceCodes = new Set([\"00\", \"ZA\"]);\n\nconst occurrenceDescriptions = {\n  \"00\": \"Pagamento confirmado\",\n  \"01\": \"Insuficiencia de fundos - debito nao efetuado\",\n  \"02\": \"Credito ou debito cancelado pelo pagador/credor\",\n  \"03\": \"Debito autorizado pela agencia - efetuado\",\n  AA: \"Controle invalido\",\n  AB: \"Tipo de operacao invalido\",\n  AC: \"Tipo de servico invalido\",\n  AD: \"Forma de lancamento invalida\",\n  AE: \"Tipo/numero de inscricao invalido\",\n  AF: \"Codigo de convenio invalido\",\n  AG: \"Agencia/conta corrente/DV invalido\",\n  AH: \"Numero sequencial do registro no lote invalido\",\n  AI: \"Codigo de segmento de detalhe invalido\",\n  AJ: \"Tipo de movimento invalido\",\n  AK: \"Codigo da camara de compensacao invalido\",\n  AL: \"Banco favorecido ou depositario invalido\",\n  AM: \"Agencia mantenedora da conta do favorecido invalida\",\n  AN: \"Conta corrente/DV do favorecido invalido\",\n  AO: \"Nome do favorecido nao informado\",\n  AP: \"Data de lancamento invalida\",\n  AQ: \"Tipo/quantidade da moeda invalido\",\n  AR: \"Valor do lancamento invalido\",\n  AS: \"Aviso ao favorecido - identificacao invalida\",\n  AT: \"Tipo/numero de inscricao do favorecido invalido\",\n  AU: \"Logradouro do favorecido nao informado\",\n  AV: \"Numero do local do favorecido nao informado\",\n  ZA: \"Ocorrencia informativa tratada como sem erro\",\n};\n\nfunction parseOccurrenceCodes(occurrences) {\n  const compact = String(occurrences || \"\").replace(/\\s+/g, \"\").toUpperCase();\n  if (!compact) return [];\n  return compact.match(/.{1,2}/g) || [];\n}\n\nfunction describeOccurrences(occurrences) {\n  const codes = parseOccurrenceCodes(occurrences);\n  if (!codes.length) return \"Sem ocorrencias\";\n\n  return codes\n    .map((code) =\u003e `${code} - ${occurrenceDescriptions[code] || \"Descricao nao cadastrada\"}`)\n    .join(\"; \");\n}\n\nfunction hasReturnError(occurrences) {\n  const codes = parseOccurrenceCodes(occurrences);\n  return codes.some((code) =\u003e !nonErrorOccurrenceCodes.has(code));\n}\n\nfunction mergePayments(result) {\n  const payments = [];\n  const pendingByLot = new Map();\n\n  for (const record of result.records) {\n    if (record.type !== \"3\") continue;\n    const parsed = record.parsed || {};\n    const lot = parsed.lot || record.currentLot || \"\";\n\n    if (record.segment === \"A\") {\n      const occurrenceError = hasReturnError(parsed.occurrences);\n      const occurrenceDescription = describeOccurrences(parsed.occurrences);\n      const payment = {\n        id: `${lot}:${record.lineNumber}`,\n        key: `${lot}:${record.lineNumber}`,\n        lineNumber: record.lineNumber,\n        segmentARecord: record,\n        segmentBRecord: null,\n        lot,\n        sequence: parsed.sequence || \"\",\n        favoredName: parsed.favoredName || \"\",\n        cpfCnpj: \"\",\n        bank: parsed.favoredBank || \"\",\n        bankName: parsed.favoredBankName || \"\",\n        agency: parsed.agency || \"\",\n        account: parsed.account || \"\",\n        accountDigit: parsed.accountDigit || \"\",\n        amount: parsed.amount || 0,\n        amountFormatted: parsed.amountFormatted || \"\",\n        paymentDate: parsed.paymentDate || \"\",\n        documentNumber: parsed.documentNumber || \"\",\n        ourNumber: parsed.ourNumber || \"\",\n        yourNumber: parsed.yourNumber || \"\",\n        occurrences: parsed.occurrences || \"\",\n        occurrenceDescription,\n        hasOccurrenceError: occurrenceError,\n        status: occurrenceError ? \"Com erro\" : \"OK\",\n        warnings: [...record.warnings],\n      };\n      payments.push(payment);\n      pendingByLot.set(lot, payment);\n    }\n\n    if (record.segment === \"B\") {\n      const payment = pendingByLot.get(lot);\n      if (!payment || payment.segmentBRecord) continue;\n      payment.segmentBRecord = record;\n      payment.cpfCnpj = parsed.registrationNumber || \"\";\n      payment.city = parsed.city || \"\";\n      payment.state = parsed.state || \"\";\n      payment.address = parsed.address || \"\";\n      payment.warnings = [...payment.warnings, ...record.warnings];\n      pendingByLot.delete(lot);\n    }\n  }\n\n  result.payments = payments.map((payment) =\u003e ({\n    ...payment,\n    searchText: buildPaymentSearch(payment),\n  }));\n}\n\nfunction summarize(result) {\n  result.headers.file = result.records.find((record) =\u003e record.type === \"0\") || null;\n  result.headers.lots = result.records.filter((record) =\u003e record.type === \"1\");\n  result.trailers.lots = result.records.filter((record) =\u003e record.type === \"5\");\n  result.trailers.file = result.records.find((record) =\u003e record.type === \"9\") || null;\n  result.totals.payments = result.payments.length;\n  result.totals.value = result.payments.reduce((sum, item) =\u003e sum + (item.amount || 0), 0);\n  result.totals.occurrences = result.payments.filter((item) =\u003e item.hasOccurrenceError).length;\n}\n\nfunction compactParsedResult(result) {\n  result.records = result.records.filter((record) =\u003e record.type !== \"3\");\n  return result;\n}\n\nasync function parseCnab240Text(text, options = {}) {\n  const layout = layouts[0];\n  const result = {\n    layout: layout.name,\n    fileName: options.fileName || \"\",\n    importedAt: new Date().toISOString(),\n    records: [],\n    payments: [],\n    warnings: [],\n    counts: { total: 0, byType: {}, bySegment: {} },\n    headers: { file: null, lots: [] },\n    trailers: { file: null, lots: [] },\n    totals: { payments: 0, value: 0, occurrences: 0 },\n  };\n\n  const lines = text\n    .replace(/\\uFEFF/g, \"\")\n    .split(detectLineEnding(text))\n    .map((line) =\u003e line.replace(/\\r$/, \"\"))\n    .filter((line) =\u003e line.length \u003e 0);\n\n  let currentLot = \"\";\n  const yieldEvery = options.yieldEvery ?? 5000;\n  for (let index = 0; index \u003c lines.length; index += 1) {\n    const line = lines[index];\n    const record = parseLine(line, index + 1, layout, currentLot);\n    if (record.type === \"1\") currentLot = record.parsed.lot || currentLot;\n    addRecord(result, record);\n\n    if (yieldEvery \u003e 0 \u0026\u0026 index % yieldEvery === 0) {\n      options.onProgress?.({ current: index + 1, total: lines.length });\n      await waitFrame();\n    }\n  }\n\n  mergePayments(result);\n  summarize(result);\n  compactParsedResult(result);\n  options.onProgress?.({ current: lines.length, total: lines.length });\n  return result;\n}\n\nfunction readFileAsText(file, onProgress) {\n  return new Promise((resolve, reject) =\u003e {\n    const reader = new FileReader();\n    reader.onerror = () =\u003e reject(reader.error);\n    reader.onload = () =\u003e resolve(String(reader.result || \"\"));\n    reader.onprogress = (event) =\u003e {\n      if (event.lengthComputable) onProgress?.({ current: event.loaded, total: event.total });\n    };\n    reader.readAsText(file, \"ISO-8859-1\");\n  });\n}\n\n\nself.onmessage = async (event) =\u003e {\n  const message = event.data || {};\n  if (message.type !== \"parseFile\") return;\n\n  try {\n    self.postMessage({ type: \"progress\", progress: { current: 0, total: message.file.size, stage: \"reading\" } });\n    const reader = new FileReaderSync();\n    const text = reader.readAsText(message.file, \"ISO-8859-1\");\n    self.postMessage({ type: \"progress\", progress: { current: 0, total: 1, stage: \"parsing\" } });\n    const result = await parseCnab240Text(text, {\n      fileName: message.fileName,\n      yieldEvery: 5000,\n      onProgress: (progress) =\u003e self.postMessage({ type: \"progress\", progress: { ...progress, stage: \"parsing\" } }),\n    });\n    self.postMessage({ type: \"progress\", progress: { current: 1, total: 1, stage: \"finalizing\" } });\n    self.postMessage({ type: \"done\", result });\n  } catch (error) {\n    self.postMessage({ type: \"error\", error: error \u0026\u0026 error.message ? error.message : String(error) });\n  }\n};";
+const parserWorkerSource = "/* src/models/cnabFields.js */\nconst recordKinds = {\n  \"0\": \"Header do arquivo\",\n  \"1\": \"Header de lote\",\n  \"3\": \"Detalhe\",\n  \"5\": \"Trailer de lote\",\n  \"9\": \"Trailer do arquivo\",\n};\n\nconst segmentLabels = {\n  A: \"Pagamento\",\n  B: \"Complemento do favorecido\",\n};\n\nconst movementTypes = {\n  \"0\": \"Inclusao\",\n  \"3\": \"Baixa\",\n  \"5\": \"Alteracao\",\n  \"9\": \"Exclusao\",\n};\n\nconst paymentForms = {\n  \"01\": \"Credito em conta corrente/salario\",\n  \"03\": \"DOC/TED\",\n  \"05\": \"Credito em poupanca\",\n  \"30\": \"Liquidacao de titulos\",\n  \"41\": \"TED outra titularidade\",\n  \"43\": \"TED mesma titularidade\",\n  \"45\": \"PIX transferencia\",\n};\n\nconst registrationTypes = {\n  \"1\": \"CPF\",\n  \"2\": \"CNPJ\",\n};\n\nconst bankNames = {\n  \"001\": \"Banco do Brasil\",\n  \"003\": \"Banco da Amazonia\",\n  \"004\": \"Banco do Nordeste\",\n  \"021\": \"Banestes\",\n  \"033\": \"Santander\",\n  \"041\": \"Banrisul\",\n  \"070\": \"BRB\",\n  \"077\": \"Inter\",\n  \"104\": \"Caixa\",\n  \"136\": \"Unicred\",\n  \"197\": \"Stone\",\n  \"208\": \"BTG Pactual\",\n  \"212\": \"Banco Original\",\n  \"237\": \"Bradesco\",\n  \"246\": \"Banco ABC Brasil\",\n  \"260\": \"Nubank\",\n  \"290\": \"PagBank\",\n  \"318\": \"Banco BMG\",\n  \"336\": \"Banco C6\",\n  \"341\": \"Itau\",\n  \"380\": \"PicPay\",\n  \"389\": \"Banco Mercantil\",\n  \"422\": \"Banco Safra\",\n  \"623\": \"Banco Pan\",\n  \"655\": \"Banco BV\",\n  \"707\": \"Banco Daycoval\",\n  \"748\": \"Sicredi\",\n  \"756\": \"Sicoob\",\n};\n\n/* src/utils/format.js */\nfunction onlyDigits(value) {\n  return String(value || \"\").replace(/\\D/g, \"\");\n}\n\nfunction cleanText(value) {\n  return String(value || \"\").replace(/\\s+/g, \" \").trim();\n}\n\nfunction stripZeros(value) {\n  const cleaned = onlyDigits(value).replace(/^0+/, \"\");\n  return cleaned || \"0\";\n}\n\nfunction formatMoneyFromCents(raw) {\n  const digits = onlyDigits(raw);\n  if (!digits) return \"\";\n  const cents = Number.parseInt(digits, 10);\n  return new Intl.NumberFormat(\"pt-BR\", {\n    style: \"currency\",\n    currency: \"BRL\",\n  }).format(cents / 100);\n}\n\nfunction centsToNumber(raw) {\n  const digits = onlyDigits(raw);\n  return digits ? Number.parseInt(digits, 10) / 100 : 0;\n}\n\nfunction formatDate(raw) {\n  const digits = onlyDigits(raw);\n  if (digits.length !== 8 || digits === \"00000000\") return \"\";\n  const day = digits.slice(0, 2);\n  const month = digits.slice(2, 4);\n  const year = digits.slice(4, 8);\n  return `${day}/${month}/${year}`;\n}\n\nfunction formatCpfCnpj(type, value) {\n  const digits = onlyDigits(value);\n  if (type === \"1\" && digits.length >= 11) {\n    const cpf = digits.slice(-11);\n    return cpf.replace(/(\\d{3})(\\d{3})(\\d{3})(\\d{2})/, \"$1.$2.$3-$4\");\n  }\n  if (type === \"2\" && digits.length >= 14) {\n    const cnpj = digits.slice(-14);\n    return cnpj.replace(/(\\d{2})(\\d{3})(\\d{3})(\\d{4})(\\d{2})/, \"$1.$2.$3/$4-$5\");\n  }\n  return stripZeros(digits);\n}\n\nfunction normalizeSearch(value) {\n  return String(value || \"\")\n    .normalize(\"NFD\")\n    .replace(/[\\u0300-\\u036f]/g, \"\")\n    .toLowerCase();\n}\n\nfunction downloadText(filename, content, mime = \"text/plain;charset=utf-8\") {\n  const blob = new Blob([content], { type: mime });\n  const url = URL.createObjectURL(blob);\n  const link = document.createElement(\"a\");\n  link.href = url;\n  link.download = filename;\n  link.click();\n  URL.revokeObjectURL(url);\n}\n\nasync function copyText(text) {\n  if (navigator.clipboard?.writeText) {\n    await navigator.clipboard.writeText(text);\n    return;\n  }\n\n  const area = document.createElement(\"textarea\");\n  area.value = text;\n  area.setAttribute(\"readonly\", \"\");\n  area.style.position = \"fixed\";\n  area.style.left = \"-9999px\";\n  document.body.appendChild(area);\n  area.select();\n  document.execCommand(\"copy\");\n  area.remove();\n}\n\nfunction csvEscape(value) {\n  const text = String(value ?? \"\");\n  if (/[\"\\n;]/.test(text)) return `\"${text.replace(/\"/g, '\"\"')}\"`;\n  return text;\n}\n\n/* src/parser/layouts/bbCnab240.js */\nfunction slice(line, start, end) {\n  return line.slice(start - 1, end);\n}\n\nfunction field(label, start, end, raw, value = cleanText(raw)) {\n  return { label, start, end, raw, value };\n}\n\nfunction bankName(code) {\n  return bankNames[code] || `Banco ${code}`;\n}\n\nconst bbCnab240Layout = {\n  id: \"bb-cnab240\",\n  name: \"CNAB240 Banco do Brasil / FEBRABAN\",\n\n  parseHeaderArquivo(line) {\n    const bank = slice(line, 1, 3);\n    const companyName = slice(line, 73, 102);\n    const fileDate = slice(line, 144, 151);\n    const fileTime = slice(line, 152, 157);\n    const sequence = slice(line, 158, 163);\n\n    return {\n      bank,\n      bankName: bankName(bank),\n      companyName: cleanText(companyName),\n      fileDate: formatDate(fileDate),\n      fileTime: fileTime.replace(/(\\d{2})(\\d{2})(\\d{2})/, \"$1:$2:$3\"),\n      sequence: stripZeros(sequence),\n      fields: [\n        field(\"Banco\", 1, 3, bank, `${bank} - ${bankName(bank)}`),\n        field(\"Tipo de registro\", 8, 8, slice(line, 8, 8), \"Header do arquivo\"),\n        field(\"Nome da empresa\", 73, 102, companyName),\n        field(\"Data de geracao\", 144, 151, fileDate, formatDate(fileDate)),\n        field(\"Hora de geracao\", 152, 157, fileTime),\n        field(\"Sequencia do arquivo\", 158, 163, sequence, stripZeros(sequence)),\n      ],\n    };\n  },\n\n  parseHeaderLote(line) {\n    const bank = slice(line, 1, 3);\n    const lot = slice(line, 4, 7);\n    const serviceType = slice(line, 10, 11);\n    const paymentForm = slice(line, 12, 13);\n    const companyName = slice(line, 73, 102);\n    const address = slice(line, 143, 172);\n    const city = slice(line, 193, 212);\n    const state = slice(line, 221, 222);\n\n    return {\n      bank,\n      bankName: bankName(bank),\n      lot: stripZeros(lot),\n      serviceType,\n      paymentForm,\n      paymentFormLabel: paymentForms[paymentForm] || paymentForm,\n      companyName: cleanText(companyName),\n      city: cleanText(city),\n      state: cleanText(state),\n      fields: [\n        field(\"Banco\", 1, 3, bank, `${bank} - ${bankName(bank)}`),\n        field(\"Lote\", 4, 7, lot, stripZeros(lot)),\n        field(\"Tipo de servico\", 10, 11, serviceType),\n        field(\"Forma de lancamento\", 12, 13, paymentForm, paymentForms[paymentForm] || paymentForm),\n        field(\"Nome da empresa\", 73, 102, companyName),\n        field(\"Endereco\", 143, 172, address),\n        field(\"Cidade\", 193, 212, city),\n        field(\"UF\", 221, 222, state),\n      ],\n    };\n  },\n\n  parseTrailerLote(line) {\n    const lot = slice(line, 4, 7);\n    const records = slice(line, 18, 23);\n    const total = slice(line, 24, 41);\n    return {\n      lot: stripZeros(lot),\n      records: stripZeros(records),\n      totalValue: centsToNumber(total),\n      totalValueFormatted: formatMoneyFromCents(total),\n      fields: [\n        field(\"Lote\", 4, 7, lot, stripZeros(lot)),\n        field(\"Quantidade de registros\", 18, 23, records, stripZeros(records)),\n        field(\"Somatoria de valores\", 24, 41, total, formatMoneyFromCents(total)),\n      ],\n    };\n  },\n\n  parseTrailerArquivo(line) {\n    const lots = slice(line, 18, 23);\n    const records = slice(line, 24, 29);\n    return {\n      lots: stripZeros(lots),\n      records: stripZeros(records),\n      fields: [\n        field(\"Quantidade de lotes\", 18, 23, lots, stripZeros(lots)),\n        field(\"Quantidade de registros\", 24, 29, records, stripZeros(records)),\n      ],\n    };\n  },\n\n  parseSegmentA(line, includeFields = true) {\n    const bank = slice(line, 1, 3);\n    const lot = slice(line, 4, 7);\n    const sequence = slice(line, 9, 13);\n    const movementType = slice(line, 15, 15);\n    const instructionCode = slice(line, 16, 17);\n    const favoredBank = slice(line, 21, 23);\n    const agency = slice(line, 24, 28);\n    const agencyDigit = slice(line, 29, 29);\n    const account = slice(line, 30, 41);\n    const accountDigit = slice(line, 42, 42);\n    const accountComboDigit = slice(line, 43, 43);\n    const name = slice(line, 44, 73);\n    const documentNumber = slice(line, 74, 93);\n    const paymentDate = slice(line, 94, 101);\n    const amount = slice(line, 120, 134);\n    const ourNumber = slice(line, 135, 154);\n    const effectiveDate = slice(line, 155, 162);\n    const effectiveAmount = slice(line, 163, 177);\n    const yourNumber = slice(line, 178, 197);\n    const occurrences = slice(line, 231, 240);\n\n    const parsed = {\n      segment: \"A\",\n      segmentLabel: segmentLabels.A,\n      lot: stripZeros(lot),\n      sequence: stripZeros(sequence),\n      bank,\n      favoredBank,\n      favoredBankName: bankName(favoredBank),\n      agency: stripZeros(agency),\n      agencyDigit: cleanText(agencyDigit),\n      account: stripZeros(account),\n      accountDigit: cleanText(accountDigit),\n      accountComboDigit: cleanText(accountComboDigit),\n      favoredName: cleanText(name),\n      documentNumber: cleanText(documentNumber),\n      ourNumber: cleanText(ourNumber),\n      yourNumber: cleanText(yourNumber),\n      amount: centsToNumber(amount),\n      amountFormatted: formatMoneyFromCents(amount),\n      effectiveAmount: centsToNumber(effectiveAmount),\n      effectiveAmountFormatted: formatMoneyFromCents(effectiveAmount),\n      paymentDate: formatDate(paymentDate),\n      effectiveDate: formatDate(effectiveDate),\n      movementType,\n      movementLabel: movementTypes[movementType] || movementType,\n      instructionCode,\n      occurrences: cleanText(occurrences),\n    };\n\n    if (includeFields) {\n      parsed.fields = [\n        field(\"Data de pagamento\", 94, 101, paymentDate, formatDate(paymentDate)),\n        field(\"Valor\", 120, 134, amount, formatMoneyFromCents(amount)),\n        field(\"Banco favorecido\", 21, 23, favoredBank, `${favoredBank} - ${bankName(favoredBank)}`),\n        field(\"Agencia\", 24, 28, agency, stripZeros(agency)),\n        field(\"Conta\", 30, 41, account, stripZeros(account)),\n        field(\"DV conta\", 42, 42, accountDigit),\n        field(\"Banco do arquivo\", 1, 3, bank, `${bank} - ${bankName(bank)}`),\n        field(\"Lote\", 4, 7, lot, stripZeros(lot)),\n        field(\"Sequencial\", 9, 13, sequence, stripZeros(sequence)),\n        field(\"Segmento\", 14, 14, \"A\", \"A - Pagamento\"),\n        field(\"Movimento\", 15, 15, movementType, movementTypes[movementType] || movementType),\n        field(\"Instrucao\", 16, 17, instructionCode),\n        field(\"DV agencia\", 29, 29, agencyDigit),\n        field(\"DV ag/conta\", 43, 43, accountComboDigit),\n        field(\"Nome favorecido\", 44, 73, name),\n        field(\"Seu numero / documento\", 74, 93, documentNumber),\n        field(\"Nosso numero\", 135, 154, ourNumber),\n        field(\"Data efetiva\", 155, 162, effectiveDate, formatDate(effectiveDate)),\n        field(\"Valor efetivo\", 163, 177, effectiveAmount, formatMoneyFromCents(effectiveAmount)),\n        field(\"Informacao / seu numero\", 178, 197, yourNumber),\n        field(\"Ocorrencias\", 231, 240, occurrences),\n      ];\n    }\n\n    return parsed;\n  },\n\n  parseSegmentB(line, includeFields = true) {\n    const lot = slice(line, 4, 7);\n    const sequence = slice(line, 9, 13);\n    const registrationType = slice(line, 18, 18);\n    const registrationNumber = slice(line, 19, 32);\n    const address = slice(line, 33, 62);\n    const addressNumber = slice(line, 63, 67);\n    const complement = slice(line, 68, 82);\n    const district = slice(line, 83, 97);\n    const city = slice(line, 98, 117);\n    const postalCode = slice(line, 118, 125);\n    const state = slice(line, 126, 127);\n    const dueDate = slice(line, 128, 135);\n    const documentAmount = slice(line, 136, 150);\n\n    const parsed = {\n      segment: \"B\",\n      segmentLabel: segmentLabels.B,\n      lot: stripZeros(lot),\n      sequence: stripZeros(sequence),\n      registrationType,\n      registrationTypeLabel: registrationTypes[registrationType] || registrationType,\n      registrationNumber: formatCpfCnpj(registrationType, registrationNumber),\n      address: cleanText(address),\n      addressNumber: stripZeros(addressNumber),\n      complement: cleanText(complement),\n      district: cleanText(district),\n      city: cleanText(city),\n      state: cleanText(state),\n      postalCode: cleanText(postalCode),\n      dueDate: formatDate(dueDate),\n      documentAmount: centsToNumber(documentAmount),\n      documentAmountFormatted: formatMoneyFromCents(documentAmount),\n    };\n\n    if (includeFields) {\n      parsed.fields = [\n        field(\"Lote\", 4, 7, lot, stripZeros(lot)),\n        field(\"Sequencial\", 9, 13, sequence, stripZeros(sequence)),\n        field(\"Segmento\", 14, 14, \"B\", \"B - Complemento\"),\n        field(\"Tipo inscricao\", 18, 18, registrationType, registrationTypes[registrationType] || registrationType),\n        field(\"CPF/CNPJ\", 19, 32, registrationNumber, formatCpfCnpj(registrationType, registrationNumber)),\n        field(\"Endereco\", 33, 62, address),\n        field(\"Numero\", 63, 67, addressNumber, stripZeros(addressNumber)),\n        field(\"Complemento\", 68, 82, complement),\n        field(\"Bairro\", 83, 97, district),\n        field(\"Cidade\", 98, 117, city),\n        field(\"CEP\", 118, 125, postalCode),\n        field(\"UF\", 126, 127, state),\n        field(\"Vencimento\", 128, 135, dueDate, formatDate(dueDate)),\n        field(\"Valor do documento\", 136, 150, documentAmount, formatMoneyFromCents(documentAmount)),\n      ];\n    }\n\n    return parsed;\n  },\n};\n\n/* src/parser/cnab240Parser.js */\nconst layouts = [bbCnab240Layout];\n\nfunction waitFrame() {\n  return new Promise((resolve) => setTimeout(resolve, 0));\n}\n\nfunction detectLineEnding(text) {\n  return text.includes(\"\\r\\n\") ? \"\\r\\n\" : \"\\n\";\n}\n\nfunction detectType(line) {\n  return line[7] || \"\";\n}\n\nfunction detectSegment(line) {\n  return line[13] || \"\";\n}\n\nfunction makeRecord(line, lineNumber, layout, parsed = {}) {\n  const type = detectType(line);\n  const segment = detectSegment(line);\n  return {\n    id: `${lineNumber}-${type}-${segment || \"x\"}`,\n    lineNumber,\n    type,\n    typeLabel: recordKinds[type] || \"Registro desconhecido\",\n    segment,\n    raw: line,\n    length: line.length,\n    layout: layout.id,\n    parsed,\n    warnings: [],\n  };\n}\n\nfunction validateLine(record) {\n  if (record.length !== 240) {\n    record.warnings.push(`Registro com ${record.length} caracteres; esperado: 240.`);\n  }\n  if (!record.typeLabel || record.typeLabel === \"Registro desconhecido\") {\n    record.warnings.push(\"Tipo de registro nao reconhecido na posicao 8.\");\n  }\n  if (record.type === \"3\" && !record.segment) {\n    record.warnings.push(\"Segmento ausente na posicao 14.\");\n  }\n}\n\nfunction parseLine(line, lineNumber, layout, currentLot) {\n  const type = detectType(line);\n  const segment = detectSegment(line);\n  let parsed = {};\n\n  if (type === \"0\") parsed = layout.parseHeaderArquivo(line);\n  if (type === \"1\") parsed = layout.parseHeaderLote(line);\n  if (type === \"5\") parsed = layout.parseTrailerLote(line);\n  if (type === \"9\") parsed = layout.parseTrailerArquivo(line);\n  if (type === \"3\" && segment === \"A\") parsed = layout.parseSegmentA(line, false);\n  if (type === \"3\" && segment === \"B\") parsed = layout.parseSegmentB(line, false);\n\n  const record = makeRecord(line, lineNumber, layout, parsed);\n  validateLine(record);\n  if (currentLot) record.currentLot = currentLot;\n  return record;\n}\n\nfunction hydrateCnabRecordFields(record) {\n  if (record.parsed?.fields?.length) return record.parsed.fields;\n  if (!record?.raw) return [];\n\n  const layout = layouts[0];\n  let parsed = {};\n  if (record.type === \"3\" && record.segment === \"A\") parsed = layout.parseSegmentA(record.raw);\n  if (record.type === \"3\" && record.segment === \"B\") parsed = layout.parseSegmentB(record.raw);\n  if (record.type === \"0\") parsed = layout.parseHeaderArquivo(record.raw);\n  if (record.type === \"1\") parsed = layout.parseHeaderLote(record.raw);\n  if (record.type === \"5\") parsed = layout.parseTrailerLote(record.raw);\n  if (record.type === \"9\") parsed = layout.parseTrailerArquivo(record.raw);\n\n  record.parsed = { ...(record.parsed || {}), fields: parsed.fields || [] };\n  return record.parsed.fields;\n}\n\nfunction addRecord(result, record) {\n  result.records.push(record);\n  result.counts.total += 1;\n  result.counts.byType[record.typeLabel] = (result.counts.byType[record.typeLabel] || 0) + 1;\n  if (record.segment) {\n    result.counts.bySegment[record.segment] = (result.counts.bySegment[record.segment] || 0) + 1;\n  }\n  if (record.warnings.length) {\n    result.warnings.push({ lineNumber: record.lineNumber, messages: record.warnings });\n  }\n}\n\nfunction buildPaymentSearch(payment) {\n  return normalizeSearch(\n    [\n      payment.favoredName,\n      payment.cpfCnpj,\n      payment.bank,\n      payment.bankName,\n      payment.agency,\n      payment.account,\n      payment.amountFormatted,\n      payment.amount,\n      payment.documentNumber,\n      payment.ourNumber,\n      payment.yourNumber,\n      payment.occurrences,\n      payment.occurrenceDescription,\n    ].join(\" \")\n  );\n}\n\nconst nonErrorOccurrenceCodes = new Set([\"00\", \"ZA\", \"BD\"]);\n\nconst occurrenceDescriptions = {\n  \"00\": \"Pagamento confirmado\",\n  \"01\": \"Insuficiencia de fundos - debito nao efetuado\",\n  \"02\": \"Credito ou debito cancelado pelo pagador/credor\",\n  \"03\": \"Debito autorizado pela agencia - efetuado\",\n  AA: \"Controle invalido\",\n  AB: \"Tipo de operacao invalido\",\n  AC: \"Tipo de servico invalido\",\n  AD: \"Forma de lancamento invalida\",\n  AE: \"Tipo/numero de inscricao invalido\",\n  AF: \"Codigo de convenio invalido\",\n  AG: \"Agencia/conta corrente/DV invalido\",\n  AH: \"Numero sequencial do registro no lote invalido\",\n  AI: \"Codigo de segmento de detalhe invalido\",\n  AJ: \"Tipo de movimento invalido\",\n  AK: \"Codigo da camara de compensacao invalido\",\n  AL: \"Banco favorecido ou depositario invalido\",\n  AM: \"Agencia mantenedora da conta do favorecido invalida\",\n  AN: \"Conta corrente/DV do favorecido invalido\",\n  AO: \"Nome do favorecido nao informado\",\n  AP: \"Data de lancamento invalida\",\n  AQ: \"Tipo/quantidade da moeda invalido\",\n  AR: \"Valor do lancamento invalido\",\n  AS: \"Aviso ao favorecido - identificacao invalida\",\n  AT: \"Tipo/numero de inscricao do favorecido invalido\",\n  AU: \"Logradouro do favorecido nao informado\",\n  AV: \"Numero do local do favorecido nao informado\",\n  BD: \"Inclusão Efetuada com Sucesso\",\n  ZA: \"Ocorrencia informativa tratada como sem erro\",\n};\n\nfunction parseOccurrenceCodes(occurrences) {\n  const compact = String(occurrences || \"\").replace(/\\s+/g, \"\").toUpperCase();\n  if (!compact) return [];\n  return compact.match(/.{1,2}/g) || [];\n}\n\nfunction describeOccurrences(occurrences) {\n  const codes = parseOccurrenceCodes(occurrences);\n  if (!codes.length) return \"Sem ocorrencias\";\n\n  return codes\n    .map((code) => `${code} - ${occurrenceDescriptions[code] || \"Descricao nao cadastrada\"}`)\n    .join(\"; \");\n}\n\nfunction hasReturnError(occurrences) {\n  const codes = parseOccurrenceCodes(occurrences);\n  return codes.some((code) => !nonErrorOccurrenceCodes.has(code));\n}\n\nfunction mergePayments(result) {\n  const payments = [];\n  const pendingByLot = new Map();\n\n  for (const record of result.records) {\n    if (record.type !== \"3\") continue;\n    const parsed = record.parsed || {};\n    const lot = parsed.lot || record.currentLot || \"\";\n\n    if (record.segment === \"A\") {\n      const occurrenceError = hasReturnError(parsed.occurrences);\n      const occurrenceDescription = describeOccurrences(parsed.occurrences);\n      const payment = {\n        id: `${lot}:${record.lineNumber}`,\n        key: `${lot}:${record.lineNumber}`,\n        lineNumber: record.lineNumber,\n        segmentARecord: record,\n        segmentBRecord: null,\n        lot,\n        sequence: parsed.sequence || \"\",\n        favoredName: parsed.favoredName || \"\",\n        cpfCnpj: \"\",\n        bank: parsed.favoredBank || \"\",\n        bankName: parsed.favoredBankName || \"\",\n        agency: parsed.agency || \"\",\n        account: parsed.account || \"\",\n        accountDigit: parsed.accountDigit || \"\",\n        amount: parsed.amount || 0,\n        amountFormatted: parsed.amountFormatted || \"\",\n        paymentDate: parsed.paymentDate || \"\",\n        documentNumber: parsed.documentNumber || \"\",\n        ourNumber: parsed.ourNumber || \"\",\n        yourNumber: parsed.yourNumber || \"\",\n        occurrences: parsed.occurrences || \"\",\n        occurrenceDescription,\n        hasOccurrenceError: occurrenceError,\n        status: occurrenceError ? \"Com erro\" : \"OK\",\n        warnings: [...record.warnings],\n      };\n      payments.push(payment);\n      pendingByLot.set(lot, payment);\n    }\n\n    if (record.segment === \"B\") {\n      const payment = pendingByLot.get(lot);\n      if (!payment || payment.segmentBRecord) continue;\n      payment.segmentBRecord = record;\n      payment.cpfCnpj = parsed.registrationNumber || \"\";\n      payment.city = parsed.city || \"\";\n      payment.state = parsed.state || \"\";\n      payment.address = parsed.address || \"\";\n      payment.warnings = [...payment.warnings, ...record.warnings];\n      pendingByLot.delete(lot);\n    }\n  }\n\n  result.payments = payments.map((payment) => ({\n    ...payment,\n    searchText: buildPaymentSearch(payment),\n  }));\n}\n\nfunction summarize(result) {\n  result.headers.file = result.records.find((record) => record.type === \"0\") || null;\n  result.headers.lots = result.records.filter((record) => record.type === \"1\");\n  result.trailers.lots = result.records.filter((record) => record.type === \"5\");\n  result.trailers.file = result.records.find((record) => record.type === \"9\") || null;\n  result.totals.payments = result.payments.length;\n  result.totals.value = result.payments.reduce((sum, item) => sum + (item.amount || 0), 0);\n  result.totals.occurrences = result.payments.filter((item) => item.hasOccurrenceError).length;\n}\n\nfunction compactParsedResult(result) {\n  // result.records = result.records.filter((record) => record.type !== \"3\");\n  return result;\n}\n\nasync function parseCnab240Text(text, options = {}) {\n  const layout = layouts[0];\n  const result = {\n    layout: layout.name,\n    fileName: options.fileName || \"\",\n    importedAt: new Date().toISOString(),\n    records: [],\n    payments: [],\n    warnings: [],\n    counts: { total: 0, byType: {}, bySegment: {} },\n    headers: { file: null, lots: [] },\n    trailers: { file: null, lots: [] },\n    totals: { payments: 0, value: 0, occurrences: 0 },\n  };\n\n  const lines = text\n    .replace(/\\uFEFF/g, \"\")\n    .split(detectLineEnding(text))\n    .map((line) => line.replace(/\\r$/, \"\"))\n    .filter((line) => line.length > 0);\n\n  let currentLot = \"\";\n  const yieldEvery = options.yieldEvery ?? 5000;\n  for (let index = 0; index < lines.length; index += 1) {\n    const line = lines[index];\n    const record = parseLine(line, index + 1, layout, currentLot);\n    if (record.type === \"1\") currentLot = record.parsed.lot || currentLot;\n    addRecord(result, record);\n\n    if (yieldEvery > 0 && index % yieldEvery === 0) {\n      options.onProgress?.({ current: index + 1, total: lines.length });\n      await waitFrame();\n    }\n  }\n\n  mergePayments(result);\n  summarize(result);\n  compactParsedResult(result);\n  options.onProgress?.({ current: lines.length, total: lines.length });\n  return result;\n}\n\nfunction readFileAsText(file, onProgress) {\n  return new Promise((resolve, reject) => {\n    const reader = new FileReader();\n    reader.onerror = () => reject(reader.error);\n    reader.onload = () => resolve(String(reader.result || \"\"));\n    reader.onprogress = (event) => {\n      if (event.lengthComputable) onProgress?.({ current: event.loaded, total: event.total });\n    };\n    reader.readAsText(file, \"ISO-8859-1\");\n  });\n}\n\nself.onmessage = async (event) => {\n  const message = event.data || {};\n  if (message.type !== \"parseFile\") return;\n\n  try {\n    self.postMessage({ type: \"progress\", progress: { current: 0, total: message.file.size, stage: \"reading\" } });\n    const reader = new FileReaderSync();\n    const text = reader.readAsText(message.file, \"ISO-8859-1\");\n    self.postMessage({ type: \"progress\", progress: { current: 0, total: 1, stage: \"parsing\" } });\n    const result = await parseCnab240Text(text, {\n      fileName: message.fileName,\n      yieldEvery: 5000,\n      onProgress: (progress) => self.postMessage({ type: \"progress\", progress: { ...progress, stage: \"parsing\" } }),\n    });\n    self.postMessage({ type: \"progress\", progress: { current: 1, total: 1, stage: \"finalizing\" } });\n    self.postMessage({ type: \"done\", result });\n  } catch (error) {\n    self.postMessage({ type: \"error\", error: error && error.message ? error.message : String(error) });\n  }\n};";
 
 /* src/services/parserWorkerService.js */
 function parseFileWithWorker(file, onProgress) {
@@ -1567,9 +1660,12 @@ function parseFileWithWorker(file, onProgress) {
   });
 }
 
-
 /* src/components/icons.js */
 const icons = {
+  code:
+    '<svg viewBox="0 0 24 24"><path d="m18 16 4-4-4-4"/><path d="m6 8-4 4 4 4"/><path d="m14.5 4-5 16"/></svg>',
+  palette:
+    '<svg viewBox="0 0 24 24"><path d="M12 21a9 9 0 0 1 0-18c4.97 0 9 4.03 9 9 0 1.5-1.2 3-2.8 3h-1.5c-.8 0-1.4.6-1.4 1.4 0 .4.1.7.3 1 .2.3.4.7.4 1.1 0 1.4-1.1 2.5-2.5 2.5Z"/><path d="M7.5 10.5v.01"/><path d="M10.5 7.5v.01"/><path d="M14.5 7.5v.01"/><path d="M17.5 11.5v.01"/></svg>',
   upload:
     '<svg viewBox="0 0 24 24"><path d="M12 3v12"/><path d="m7 8 5-5 5 5"/><path d="M4 15v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/></svg>',
   search:
@@ -1592,9 +1688,109 @@ const icons = {
     '<svg viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>',
 };
 
-
 /* src/components/app.js */
 const pageSizeOptions = [25, 50, 100, 250];
+
+const bankProfiles = {
+  "001": {
+    name: "Banco do Brasil", abbr: "BB",
+    badgeBg: "#FFE400", badgeText: "#003082",
+    colorScheme: "light",
+    primary: "#0038A8", primary2: "#002D72",
+    bg: "#f4f5f7", panel: "#ffffff", panel2: "#eef0f4",
+    text: "#003082", muted: "#5c708a", line: "#FFE400", lineSoft: "#e2e5ec",
+    icon: '<img src="data:image/png;base64,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" style="display:block;width:100%;height:100%;object-fit:cover;border-radius:8px;" />',
+  },
+  "033": {
+    name: "Santander", abbr: "SAN",
+    badgeBg: "#EC0000", badgeText: "#ffffff",
+    colorScheme: "light",
+    primary: "#EC0000", primary2: "#cc0000",
+    bg: "#f6f6f6", panel: "#ffffff", panel2: "#ebebeb",
+    text: "#1c1c1c", muted: "#666666", line: "#EC0000", lineSoft: "#dbdbdb",
+  },
+  "077": {
+    name: "Banco Inter", abbr: "inter",
+    badgeBg: "#FF6700", badgeText: "#ffffff",
+    colorScheme: "light",
+    primary: "#FF6700", primary2: "#cc5200",
+    bg: "#f8f9fa", panel: "#ffffff", panel2: "#f1f3f5",
+    text: "#1f1f1f", muted: "#6b7280", line: "#FF6700", lineSoft: "#e9ecef",
+  },
+  "208": {
+    name: "BTG Pactual", abbr: "BTG",
+    badgeBg: "#001E61", badgeText: "#ffffff",
+    colorScheme: "light",
+    primary: "#001E61", primary2: "#123B78",
+    bg: "#f3f5f8", panel: "#ffffff", panel2: "#e9edf3",
+    text: "#10233f", muted: "#607087", line: "#001E61", lineSoft: "#d9e0e9",
+  },
+  "260": {
+    name: "Nubank", abbr: "NU",
+    badgeBg: "#820AD1", badgeText: "#ffffff",
+    colorScheme: "light",
+    primary: "#820AD1", primary2: "#5f079c",
+    bg: "#f7f2fa", panel: "#ffffff", panel2: "#eee4f4",
+    text: "#2f123d", muted: "#725d7d", line: "#820AD1", lineSoft: "#e2d5e8",
+  },
+  "290": {
+    name: "PagBank", abbr: "PAG",
+    badgeBg: "#00A868", badgeText: "#ffffff",
+    colorScheme: "light",
+    primary: "#00A868", primary2: "#00794b",
+    bg: "#f1f7f4", panel: "#ffffff", panel2: "#e2eee8",
+    text: "#12372a", muted: "#587267", line: "#00A868", lineSoft: "#d0e1d9",
+  },
+  "336": {
+    name: "Banco C6", abbr: "C6",
+    badgeBg: "#242424", badgeText: "#ffffff",
+    colorScheme: "light",
+    primary: "#242424", primary2: "#555555",
+    bg: "#f3f3f3", panel: "#ffffff", panel2: "#e8e8e8",
+    text: "#202020", muted: "#666666", line: "#242424", lineSoft: "#d8d8d8",
+  },
+  "104": {
+    name: "Caixa Economica", abbr: "CEF",
+    badgeBg: "#005CA9", badgeText: "#ffffff",
+    colorScheme: "light",
+    primary: "#005CA9", primary2: "#f68b1f",
+    bg: "#ebf1f6", panel: "#ffffff", panel2: "#deeaee",
+    text: "#003d7a", muted: "#526f8c", line: "#f68b1f", lineSoft: "#cbdce6",
+    icon: '<img src="data:image/jpeg;base64,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" style="display:block;width:100%;height:100%;object-fit:cover;border-radius:8px;" />',
+  },
+  "237": {
+    name: "Bradesco", abbr: "BRD",
+    badgeBg: "#CC0000", badgeText: "#ffffff",
+    colorScheme: "light",
+    primary: "#CC0000", primary2: "#0033AA",
+    bg: "#f5f6f8", panel: "#ffffff", panel2: "#ebedf1",
+    text: "#172033", muted: "#667085", line: "#CC0000", lineSoft: "#e1e4ea",
+  },
+  "341": {
+    name: "Itau Unibanco", abbr: "ITAU",
+    badgeBg: "#003087", badgeText: "#EC7000",
+    colorScheme: "light",
+    primary: "#EC7000", primary2: "#003087",
+    bg: "#f5f7fa", panel: "#ffffff", panel2: "#eef1f6",
+    text: "#002040", muted: "#526c8c", line: "#EC7000", lineSoft: "#d9e2ec",
+  },
+  "748": {
+    name: "Sicredi", abbr: "SIC",
+    badgeBg: "#007A3D", badgeText: "#ffffff",
+    colorScheme: "light",
+    primary: "#00A651", primary2: "#007A3D",
+    bg: "#f4f7f5", panel: "#ffffff", panel2: "#e7ece8",
+    text: "#0f2a1a", muted: "#526e5e", line: "#00A651", lineSoft: "#d2dbd4",
+  },
+  "756": {
+    name: "Sicoob", abbr: "SCB",
+    badgeBg: "#0065B4", badgeText: "#ffffff",
+    colorScheme: "light",
+    primary: "#00ae9d", primary2: "#003641",
+    bg: "#f2f6f7", panel: "#ffffff", panel2: "#e3ebed",
+    text: "#003641", muted: "#52747d", line: "#00ae9d", lineSoft: "#cedbe0",
+  },
+};
 
 function createApp(root) {
   const state = {
@@ -1603,11 +1799,14 @@ function createApp(root) {
     query: "",
     segmentFilter: "todos",
     occurrenceFilter: "todos",
+    lotFilter: "todos",
     page: 1,
     pageSize: 50,
     selectedPayment: null,
     activeView: "movimentos",
-    isDark: localStorage.getItem("cnab-theme") === "dark",
+    theme: localStorage.getItem("cnab-theme") || "moderno",
+    sortColumn: "lineNumber",
+    sortAsc: true,
     loading: false,
     progress: null,
     message: "",
@@ -1638,7 +1837,12 @@ function createApp(root) {
         state.occurrenceFilter === "todos" ||
         (state.occurrenceFilter === "com" && payment.hasOccurrenceError) ||
         (state.occurrenceFilter === "sem" && !payment.hasOccurrenceError);
-      return matchesQuery && matchesOccurrence;
+      
+      const matchesLot =
+        state.lotFilter === "todos" ||
+        String(payment.lot) === state.lotFilter;
+
+      return matchesQuery && matchesOccurrence && matchesLot;
     });
     const maxPage = Math.max(1, Math.ceil(state.filteredPayments.length / state.pageSize));
     if (state.page > maxPage) state.page = maxPage;
@@ -1678,6 +1882,7 @@ function createApp(root) {
       });
       state.parseResult = parsed;
       state.query = "";
+      state.lotFilter = "todos";
       state.page = 1;
       state.selectedPayment = parsed.payments[0] || null;
       applyFilters();
@@ -1730,6 +1935,13 @@ function createApp(root) {
       renderMovementsOnly();
     });
 
+    root.querySelector("#lot-filter")?.addEventListener("change", (event) => {
+      state.lotFilter = event.target.value;
+      state.page = 1;
+      applyFilters();
+      renderMovementsOnly();
+    });
+
     root.querySelector("#page-size")?.addEventListener("change", (event) => {
       state.pageSize = Number(event.target.value);
       state.page = 1;
@@ -1738,7 +1950,10 @@ function createApp(root) {
     });
 
     root.querySelectorAll("[data-view]").forEach((button) => {
-      button.addEventListener("click", () => setState({ activeView: button.dataset.view }));
+      button.addEventListener("click", () => {
+        state.page = 1;
+        setState({ activeView: button.dataset.view });
+      });
     });
 
     root.querySelector("#movements-content")?.addEventListener("click", (event) => {
@@ -1748,7 +1963,27 @@ function createApp(root) {
         renderMovementsOnly();
         return;
       }
-
+      root.querySelector(".movements-table")?.addEventListener("click", (e) => {
+        const th = e.target.closest("th.sortable");
+        if (th) {
+          const col = th.dataset.sort;
+          if (state.sortColumn === col) {
+            state.sortAsc = !state.sortAsc;
+          } else {
+            state.sortColumn = col;
+            state.sortAsc = true;
+          }
+          render();
+          return;
+        }
+        const row = e.target.closest(".payment-row");
+        if (row) {
+          const id = row.dataset.id;
+          setState({
+            selectedPayment: state.parseResult.payments.find((p) => p.id === id) || null,
+          });
+        }
+      });
       const row = event.target.closest("[data-select-payment]");
       if (row) {
         const payment = state.filteredPayments.find((item) => item.id === row.dataset.selectPayment);
@@ -1756,9 +1991,9 @@ function createApp(root) {
       }
     });
 
-    root.querySelector("#theme-toggle")?.addEventListener("click", () => {
-      state.isDark = !state.isDark;
-      localStorage.setItem("cnab-theme", state.isDark ? "dark" : "light");
+    root.querySelector("#theme-select")?.addEventListener("change", (event) => {
+      state.theme = event.target.value;
+      localStorage.setItem("cnab-theme", state.theme);
       render();
     });
 
@@ -1798,17 +2033,69 @@ function createApp(root) {
     return `<section class="stat"><span>${label}</span><strong>${value}</strong><small>${hint}</small></section>`;
   }
 
+  function detectedBank() {
+    if (!state.parseResult?.headers?.file) return null;
+    const code = state.parseResult.headers.file.parsed.bank;
+    const parsedName = state.parseResult.headers.file.parsed.bankName;
+    const profile = bankProfiles[code];
+    if (profile) return { code, ...profile };
+
+    const name = parsedName || `Banco ${code}`;
+    const words = name
+      .replace(/^Banco\s+/i, "")
+      .split(/\s+/)
+      .filter(Boolean);
+    const initials = words.length > 1
+      ? words.slice(0, 3).map((word) => word[0]).join("")
+      : (words[0] || code).slice(0, 4);
+
+    return {
+      code,
+      name,
+      abbr: initials.toUpperCase(),
+      badgeBg: "#344054",
+      badgeText: "#ffffff",
+      colorScheme: "light",
+      primary: "#344054",
+      primary2: "#475467",
+      bg: "#f4f5f7",
+      panel: "#ffffff",
+      panel2: "#eaecf0",
+      text: "#1d2939",
+      muted: "#667085",
+      line: "#344054",
+      lineSoft: "#d0d5dd",
+    };
+  }
+
   function sidebar() {
     const result = state.parseResult;
     const segments = result?.counts.bySegment || {};
+    const bank = detectedBank();
+
+    let brandMarkHtml;
+    if (bank?.icon) {
+      // Extract the src from the icon HTML and render a clean <img>
+      const srcMatch = bank.icon.match(/src="([^"]+)"/);
+      const imgSrc = srcMatch ? srcMatch[1] : '';
+      brandMarkHtml = imgSrc
+        ? `<img class="brand-mark-icon" src="${imgSrc}" alt="${bank.name}" />`
+        : `<span class="brand-mark" style="background:${bank.badgeBg};color:${bank.badgeText}">${bank.abbr}</span>`;
+    } else if (bank) {
+      const fs = bank.abbr.length > 3 ? "9px" : bank.abbr.length > 2 ? "10px" : "12px";
+      brandMarkHtml = `<span class="brand-mark" style="background:${bank.badgeBg};color:${bank.badgeText};font-size:${fs};letter-spacing:-0.5px;">${bank.abbr}</span>`;
+    } else {
+      brandMarkHtml = `<span class="brand-mark">240</span>`;
+    }
+
     return `
       <aside class="sidebar">
         <div class="brand">
-          <span class="brand-mark">240</span>
-          <div><strong>CNAB Viewer</strong><small>Local e offline</small></div>
+          ${brandMarkHtml}
+          <div><strong>${bank ? bank.name : "CNAB Viewer"}</strong><small>${bank ? `Banco ${bank.code}` : "Local e offline"}</small></div>
         </div>
         <label class="drop-zone">
-          <input id="file-input" type="file" accept=".txt,.rem,.ret,*/*" />
+          <input id="file-input" type="file" accept="*.*" />
           <span class="icon">${icons.upload}</span>
           <strong>Selecionar CNAB</strong>
           <small>ou arraste .txt, .rem, .ret</small>
@@ -1816,17 +2103,25 @@ function createApp(root) {
         ${progressBar()}
         <nav class="nav">
           ${navButton("movimentos", icons.table, "Movimentos")}
+          ${navButton("hex-viewer", icons.code, "Mapa de Campos")}
           ${navButton("estrutura", icons.file, "Estrutura")}
-          ${navButton("validacao", icons.warning, "Validacao")}
+          ${navButton("validacao", icons.warning, "Auditoria")}
         </nav>
         <div class="side-section">
           <span class="side-title">Segmentos</span>
           ${["A", "B"].map((seg) => `<div class="side-row"><span>Segmento ${seg}</span><strong>${segments[seg] || 0}</strong></div>`).join("")}
         </div>
-        <button class="ghost-button" id="theme-toggle" title="Alternar tema">
-          <span class="icon">${state.isDark ? icons.sun : icons.moon}</span>
-          ${state.isDark ? "Tema claro" : "Tema escuro"}
-        </button>
+        <div class="side-section" style="margin-top: 14px">
+          <span class="side-title">Aparencia</span>
+          <select id="theme-select">
+            <option value="moderno" ${state.theme === "moderno" ? "selected" : ""}>Banco Moderno</option>
+            <option value="terminal" ${state.theme === "terminal" ? "selected" : ""}>Terminal Bancario</option>
+            <option value="cyberpunk" ${state.theme === "cyberpunk" ? "selected" : ""}>Cyberpunk Finance</option>
+            <option value="multibanco" ${state.theme === "multibanco" ? "selected" : ""}>Cores do Banco</option>
+            <option value="light" ${state.theme === "light" ? "selected" : ""}>Sistema Claro</option>
+            <option value="dark" ${state.theme === "dark" ? "selected" : ""}>Sistema Escuro</option>
+          </select>
+        </div>
       </aside>
     `;
   }
@@ -1835,13 +2130,28 @@ function createApp(root) {
     return `<button class="${state.activeView === view ? "active" : ""}" data-view="${view}"><span class="icon">${icon}</span>${label}</button>`;
   }
 
+  function getUniqueLots() {
+    if (!state.parseResult) return [];
+    const lots = state.parseResult.payments.map(p => p.lot);
+    return [...new Set(lots)].sort((a, b) => Number(a) - Number(b));
+  }
+
   function toolbar() {
+    const uniqueLots = getUniqueLots();
+    const lotOptions = uniqueLots.map(lot => 
+      `<option value="${lot}" ${state.lotFilter === String(lot) ? "selected" : ""}>Lote ${lot}</option>`
+    ).join("");
+
     return `
       <div class="toolbar">
         <div class="search-box">
           <span class="icon">${icons.search}</span>
           <input id="search" value="${escapeHtml(state.query)}" placeholder="Buscar por nome, CPF/CNPJ, banco, agencia, conta, valor, documento..." />
         </div>
+        <select id="lot-filter" aria-label="Filtro de lotes">
+          <option value="todos" ${state.lotFilter === "todos" ? "selected" : ""}>Todos os lotes</option>
+          ${lotOptions}
+        </select>
         <select id="occurrence-filter" aria-label="Filtro de ocorrencias">
           <option value="todos" ${state.occurrenceFilter === "todos" ? "selected" : ""}>Todos os retornos</option>
           <option value="com" ${state.occurrenceFilter === "com" ? "selected" : ""}>Com erro</option>
@@ -1855,16 +2165,44 @@ function createApp(root) {
     `;
   }
 
+  function th(column, label, cssClass = "") {
+    const isSort = state.sortColumn === column;
+    const arrow = isSort ? (state.sortAsc ? " ↑" : " ↓") : "";
+    const activeClass = isSort ? "sort-active" : "";
+    return `<th class="sortable ${cssClass} ${activeClass}" data-sort="${column}" style="cursor: pointer; user-select: none;" title="Ordenar por ${label}">${label}${arrow}</th>`;
+  }
+
   function movementsContent() {
-    const totalPages = Math.max(1, Math.ceil(state.filteredPayments.length / state.pageSize));
+    let sorted = [...state.filteredPayments];
+    if (state.sortColumn) {
+      sorted.sort((a, b) => {
+        let valA = a[state.sortColumn];
+        let valB = b[state.sortColumn];
+        if (typeof valA === "string") valA = valA.toLowerCase();
+        if (typeof valB === "string") valB = valB.toLowerCase();
+        if (valA < valB) return state.sortAsc ? -1 : 1;
+        if (valA > valB) return state.sortAsc ? 1 : -1;
+        return 0;
+      });
+    }
+
+    const totalPages = Math.max(1, Math.ceil(sorted.length / state.pageSize));
     const start = (state.page - 1) * state.pageSize;
-    const pageItems = state.filteredPayments.slice(start, start + state.pageSize);
+    const pageItems = sorted.slice(start, start + state.pageSize);
     return `
-      <div class="table-shell">
+      <div class="table-shell movements-table">
         <table>
           <thead>
             <tr>
-              <th>Linha</th><th>Nome favorecido</th><th>CPF/CNPJ</th><th>Banco</th><th>Agencia</th><th>Conta</th><th class="text-right">Valor</th><th>Documento</th><th>Status</th>
+              ${th("lineNumber", "Linha")}
+              ${th("favoredName", "Nome favorecido")}
+              ${th("cpfCnpj", "CPF/CNPJ")}
+              ${th("bankName", "Banco")}
+              ${th("agency", "Agencia")}
+              ${th("account", "Conta")}
+              ${th("amount", "Valor", "text-right")}
+              ${th("documentNumber", "Documento")}
+              ${th("status", "Status")}
             </tr>
           </thead>
           <tbody>
@@ -1923,28 +2261,46 @@ function createApp(root) {
     `;
   }
 
+  function recordCard(title, record, description = "") {
+    if (!record) return `<section class="info-card"><h3>${title}</h3><p class="muted">Nao encontrado.</p></section>`;
+    return `
+      <section class="info-card">
+        <h3>${title}</h3>
+        ${description ? `<div class="febraban-tip"><em>Descrição:</em> ${description}</div>` : ""}
+        <div class="field-grid">
+          ${(record.parsed.fields || []).map((item) => `<div><span title="Posicao ${item.start}-${item.end} (${item.end - item.start + 1} chars)">${escapeHtml(item.label)}</span><strong>${escapeHtml(item.value || "-")}</strong></div>`).join("")}
+        </div>
+      </section>
+    `;
+  }
+
   function structureView() {
     if (!state.parseResult) return emptyState();
     const result = state.parseResult;
     return `
       <div class="cards-grid">
-        ${recordCard("Header do arquivo", result.headers.file)}
-        ${result.headers.lots.map((record, index) => recordCard(`Header lote ${index + 1}`, record)).join("")}
-        ${result.trailers.lots.map((record, index) => recordCard(`Trailer lote ${index + 1}`, record)).join("")}
-        ${recordCard("Trailer do arquivo", result.trailers.file)}
+        ${recordCard("Header do arquivo", result.headers.file, "Abre o arquivo e contém dados da empresa (nome, banco) e data de geração. Só pode existir um por arquivo (Tipo 0).")}
+        ${result.headers.lots.map((record, index) => recordCard(`Header lote ${index + 1}`, record, "Inicia um grupo de pagamentos do mesmo tipo de serviço. Deve ter um Trailer de Lote correspondente.")).join("")}
+        ${result.trailers.lots.map((record, index) => {
+          const lotNum = record.currentLot || (result.headers.lots[index]?.currentLot) || "";
+          const lotPaymentsCount = result.payments.filter(p => String(p.lot) === String(lotNum)).length;
+          
+          const fields = [...(record.parsed.fields || [])];
+          const hasPaymentsField = fields.some(f => f.label.toLowerCase().includes("pagamento"));
+          if (!hasPaymentsField) {
+            fields.push({
+              label: "Quantidade de Pagamentos",
+              value: String(lotPaymentsCount),
+              start: 0,
+              end: 0
+            });
+          }
+          
+          const recordClone = { ...record, parsed: { ...record.parsed, fields } };
+          return recordCard(`Trailer lote ${index + 1}`, recordClone, "Encerra um lote, consolidando as quantidades de registros e o valor total dos pagamentos dentro deste lote.");
+        }).join("")}
+        ${recordCard("Trailer do arquivo", result.trailers.file, "Última linha do arquivo (Tipo 9). Totaliza a quantidade de lotes e a quantidade de registros totais.")}
       </div>
-    `;
-  }
-
-  function recordCard(title, record) {
-    if (!record) return `<section class="info-card"><h3>${title}</h3><p class="muted">Nao encontrado.</p></section>`;
-    return `
-      <section class="info-card">
-        <h3>${title}</h3>
-        <div class="field-grid">
-          ${(record.parsed.fields || []).map((item) => `<div><span>${escapeHtml(item.label)}</span><strong>${escapeHtml(item.value || "-")}</strong></div>`).join("")}
-        </div>
-      </section>
     `;
   }
 
@@ -2029,14 +2385,105 @@ function createApp(root) {
     `;
   }
 
+  function hexRecord(record) {
+    if (!record.raw) return "";
+    const fields = hydrateCnabRecordFields(record);
+    if (!fields || !fields.length) {
+      return `<div class="hex-line"><span class="hex-field" title="Desconhecido">${escapeHtml(record.raw)}</span></div>`;
+    }
+    
+    let html = `<div class="hex-line">`;
+    let lastEnd = 0;
+    const sortedFields = [...fields].sort((a, b) => a.start - b.start);
+    
+    for (const f of sortedFields) {
+      if (f.start > lastEnd + 1) {
+        html += `<span class="hex-field gap">${escapeHtml(record.raw.substring(lastEnd, f.start - 1))}</span>`;
+      }
+      const val = record.raw.substring(f.start - 1, f.end);
+      html += `<span class="hex-field" title="${escapeHtml(f.label)} (pos: ${f.start}-${f.end}, tam: ${f.end - f.start + 1})">${escapeHtml(val)}</span>`;
+      lastEnd = f.end;
+    }
+    if (lastEnd < record.raw.length) {
+      html += `<span class="hex-field gap">${escapeHtml(record.raw.substring(lastEnd))}</span>`;
+    }
+    html += `</div>`;
+    return html;
+  }
+
+  function hexView() {
+    if (!state.parseResult) return emptyState();
+    const records = state.parseResult.records;
+    const totalPages = Math.max(1, Math.ceil(records.length / state.pageSize));
+    const start = (state.page - 1) * state.pageSize;
+    const pageItems = records.slice(start, start + state.pageSize);
+
+    let ruler1 = "";
+    let ruler2 = "";
+    for (let i = 1; i <= 240; i++) {
+      if (i % 10 === 0) {
+        ruler1 += String(i / 10).slice(-1);
+        ruler2 += "0";
+      } else {
+        ruler1 += " ";
+        ruler2 += String(i % 10);
+      }
+    }
+
+    return `
+      <div class="hex-container">
+        <div class="hex-ruler">${ruler1}<br>${ruler2}</div>
+        ${pageItems.map(hexRecord).join("")}
+      </div>
+      <div class="pagination">
+        <span>${records.length} linhas do arquivo</span>
+        <div>
+          <button data-page="${Math.max(1, state.page - 1)}" ${state.page === 1 ? "disabled" : ""}>Anterior</button>
+          <strong>${state.page} / ${totalPages}</strong>
+          <button data-page="${Math.min(totalPages, state.page + 1)}" ${state.page === totalPages ? "disabled" : ""}>Proxima</button>
+        </div>
+      </div>
+    `;
+  }
+
   function mainView() {
     if (state.activeView === "estrutura") return structureView();
     if (state.activeView === "validacao") return validationView();
+    if (state.activeView === "hex-viewer") return hexView();
     return movementsView();
   }
 
+  const bankThemeVars = ["--primary","--primary-2","--bg","--panel","--panel-2","--text","--muted","--line","--line-soft"];
+
   function render() {
-    document.documentElement.dataset.theme = state.isDark ? "dark" : "light";
+    let datasetTheme = state.theme;
+    if (state.theme === "multibanco" && state.parseResult?.headers?.file) {
+      const bankCode = state.parseResult.headers.file.parsed.bank;
+      const profile = bankProfiles[bankCode];
+      datasetTheme = profile?.colorScheme || "light";
+    }
+    document.documentElement.dataset.theme = datasetTheme;
+
+    if (state.theme === "multibanco" && state.parseResult?.headers?.file) {
+      const bankCode = state.parseResult.headers.file.parsed.bank;
+      const profile = bankProfiles[bankCode];
+      if (profile) {
+        document.documentElement.style.setProperty("--primary", profile.primary);
+        document.documentElement.style.setProperty("--primary-2", profile.primary2);
+        document.documentElement.style.setProperty("--bg", profile.bg);
+        document.documentElement.style.setProperty("--panel", profile.panel);
+        document.documentElement.style.setProperty("--panel-2", profile.panel2);
+        document.documentElement.style.setProperty("--text", profile.text);
+        document.documentElement.style.setProperty("--muted", profile.muted);
+        document.documentElement.style.setProperty("--line", profile.line);
+        document.documentElement.style.setProperty("--line-soft", profile.lineSoft);
+      } else {
+        bankThemeVars.forEach(v => document.documentElement.style.removeProperty(v));
+      }
+    } else {
+      bankThemeVars.forEach(v => document.documentElement.style.removeProperty(v));
+    }
+
     root.innerHTML = `
       <div class="app-shell">
         ${sidebar()}
@@ -2068,7 +2515,6 @@ function escapeHtml(value) {
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#039;");
 }
-
 
 /* src/main.js */
 createApp(document.querySelector("#app"));
