@@ -342,7 +342,7 @@ function exportFilteredCsv() {
 async function parseOnMainThread(file) {
   const content = await file.text();
   const lines = content.split(/\r?\n/);
-  const summary = { empresa: "", convenio: "", nsa: "", totalPagamentos: 0, valorTotal: 0 };
+  const summary = { empresa: "", convenio: "", nsa: "", totalPagamentos: 0, valorTotal: 0, tipoArquivo: "" };
   const records = [];
   let tipoServico = "";
   let formaLancamento = "";
@@ -361,6 +361,7 @@ async function parseOnMainThread(file) {
       summary.empresa = fw(line, 73, 30).trim();
       summary.convenio = fw(line, 33, 20).trim();
       summary.nsa = fw(line, 158, 6).trim();
+      summary.tipoArquivo = fw(line, 143, 1);
     }
     if (tipo === "1") {
       const codSrv = fw(line, 10, 2);
@@ -394,7 +395,9 @@ async function parseOnMainThread(file) {
         tipoServico,
         formaLancamento,
         codRetorno,
-        descRetorno: retornoDescricao[codRetorno] || `Codigo ${codRetorno || "-"}`,
+        descRetorno: codRetorno === "00"
+          ? (summary.tipoArquivo === "1" ? "Remessa Enviada" : "Pagamento Efetuado")
+          : (retornoDescricao[codRetorno] || `Codigo ${codRetorno || "-"}`),
         inscricao: "",
         endereco: "",
         vencimento: "",

@@ -159,7 +159,7 @@ function formatDate8(raw) {
 }
 
 async function parseFile(file) {
-  const summary = { empresa: "", convenio: "", nsa: "", totalPagamentos: 0, valorTotal: 0 };
+  const summary = { empresa: "", convenio: "", nsa: "", totalPagamentos: 0, valorTotal: 0, tipoArquivo: "" };
   const records = [];
   let tipoServico = "";
   let formaLancamento = "";
@@ -188,6 +188,7 @@ async function parseFile(file) {
         summary.empresa = fw(line, 73, 30).trim();
         summary.convenio = fw(line, 33, 20).trim();
         summary.nsa = fw(line, 158, 6).trim();
+        summary.tipoArquivo = fw(line, 143, 1);
       }
 
       if (tipo === "1") {
@@ -223,7 +224,9 @@ async function parseFile(file) {
           tipoServico,
           formaLancamento,
           codRetorno,
-          descRetorno: retornoDescricao[codRetorno] || `Codigo ${codRetorno || "-"}`,
+          descRetorno: codRetorno === "00"
+            ? (summary.tipoArquivo === "1" ? "Remessa Enviada" : "Pagamento Efetuado")
+            : (retornoDescricao[codRetorno] || `Codigo ${codRetorno || "-"}`),
           // Segmento B data placeholders
           inscricao: "",
           endereco: "",
