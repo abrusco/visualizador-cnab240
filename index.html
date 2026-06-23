@@ -915,7 +915,7 @@ pre {
 (function () {
   "use strict";
 
-const APP_VERSION = "1.2.1";
+const APP_VERSION = "1.2.2";
 
 /* src/models/cnabFields.js */
 const recordKinds = {
@@ -1066,8 +1066,11 @@ function downloadText(filename, content, mime = "text/plain;charset=utf-8") {
   const link = document.createElement("a");
   link.href = url;
   link.download = filename;
+  link.style.display = "none";
+  document.body.appendChild(link);
   link.click();
-  URL.revokeObjectURL(url);
+  link.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 0);
 }
 
 async function copyText(text) {
@@ -1091,6 +1094,71 @@ function csvEscape(value) {
   const text = String(value ?? "");
   if (/["\n;]/.test(text)) return `"${text.replace(/"/g, '""')}"`;
   return text;
+}
+
+function formatCsvNumber(value) {
+  const number = Number(value || 0);
+  return Number.isFinite(number) ? number.toFixed(2).replace(".", ",") : "";
+}
+
+function exportPaymentsCsv(payments, fileName = "cnab240-pagamentos.csv") {
+  const headers = [
+    "Linha",
+    "Lote",
+    "Sequencial",
+    "Nome",
+    "CPF/CNPJ",
+    "Banco",
+    "Agencia",
+    "Conta",
+    "Valor",
+    "Data pagamento",
+    "Documento",
+    "Nosso numero",
+    "Seu numero",
+    "Ocorrencias",
+    "Descricao ocorrencias",
+  ];
+
+  const rows = payments.map((item) => [
+    item.lineNumber,
+    item.lot,
+    item.sequence,
+    item.favoredName,
+    item.cpfCnpj,
+    `${item.bank} ${item.bankName}`.trim(),
+    item.agency,
+    `${item.account}-${item.accountDigit || ""}`.replace(/-$/, ""),
+    formatCsvNumber(item.amount),
+    item.paymentDate,
+    item.documentNumber,
+    item.ourNumber,
+    item.yourNumber,
+    item.occurrences,
+    item.occurrenceDescription,
+  ]);
+
+  const csv = [headers, ...rows].map((row) => row.map(csvEscape).join(";")).join("\n");
+  downloadText(fileName, csv, "text/csv;charset=utf-8");
+}
+
+function formatPaymentLine(payment) {
+  return [
+    `Linha ${payment.lineNumber}`,
+    `Lote ${payment.lot}`,
+    payment.favoredName || "Sem nome",
+    payment.cpfCnpj || "CPF/CNPJ nao informado",
+    `${payment.bank} ${payment.bankName}`.trim(),
+    `Ag ${payment.agency}`,
+    `Conta ${payment.account}${payment.accountDigit ? `-${payment.accountDigit}` : ""}`,
+    payment.amountFormatted,
+    payment.paymentDate ? `Pgto ${payment.paymentDate}` : "",
+    payment.documentNumber ? `Doc ${payment.documentNumber}` : "",
+    payment.hasOccurrenceError ? `Ocorrencias ${payment.occurrences}` : "Sem erro",
+    payment.occurrenceDescription || "",
+  ]
+    .filter(Boolean)
+    .join(" | ");
 }
 
 /* src/parser/layouts/bbCnab240.js */
@@ -2201,7 +2269,7 @@ function createApp(root) {
 
   function th(column, label, cssClass = "") {
     const isSort = state.sortColumn === column;
-    const arrow = isSort ? (state.sortAsc ? " ↑" : " ↓") : "";
+    const arrow = isSort ? (state.sortAsc ? " � " : " � ") : "";
     const activeClass = isSort ? "sort-active" : "";
     return `<th class="sortable ${cssClass} ${activeClass}" data-sort="${column}" style="cursor: pointer; user-select: none;" title="Ordenar por ${label}">${label}${arrow}</th>`;
   }
@@ -2333,7 +2401,7 @@ function createApp(root) {
           const recordClone = { ...record, parsed: { ...record.parsed, fields } };
           return recordCard(`Trailer lote ${index + 1}`, recordClone, "Encerra um lote, consolidando as quantidades de registros e o valor total dos pagamentos dentro deste lote.");
         }).join("")}
-        ${recordCard("Trailer do arquivo", result.trailers.file, "Última linha do arquivo (Tipo 9). Totaliza a quantidade de lotes e a quantidade de registros totais.")}
+        ${recordCard("Trailer do arquivo", result.trailers.file, "�altima linha do arquivo (Tipo 9). Totaliza a quantidade de lotes e a quantidade de registros totais.")}
       </div>
     `;
   }
@@ -2575,3 +2643,4 @@ createApp(document.querySelector("#app"));
     </script>
   </body>
 </html>
+

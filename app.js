@@ -324,19 +324,23 @@ function resetState() {
 }
 
 function exportFilteredCsv() {
+  if (!state.filteredIndexes.length) return;
   const headers = ["linha", "lote", "registro", "cpf", "nome", "valor", "banco", "agencia", "conta", "dtPagamento", "codRetorno", "descRetorno", "inscricaoSegB", "autenticacao"];
   const lines = [headers.join(";")];
   for (const i of state.filteredIndexes) {
     const r = state.records[i];
-    lines.push([r.lineNo, r.lote, r.registro, r.cpf, r.nome, r.valor.toFixed(2), r.banco, r.agencia, r.conta, r.dtPagamento, r.codRetorno, r.descRetorno, r.inscricaoSegB, r.autenticacao].map((v) => `"${String(v ?? "").replaceAll('"', '""')}"`).join(";"));
+    lines.push([r.lineNo, r.lote, r.registro, r.cpf, r.nome, Number(r.valor || 0).toFixed(2), r.banco, r.agencia, r.conta, r.dtPagamento, r.codRetorno, r.descRetorno, r.inscricaoSegB, r.autenticacao].map((v) => `"${String(v ?? "").replaceAll('"', '""')}"`).join(";"));
   }
   const blob = new Blob([lines.join("\n")], { type: "text/csv;charset=utf-8" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
   a.download = `retorno-cnab240-${new Date().toISOString().replaceAll(":", "-")}.csv`;
+  a.style.display = "none";
+  document.body.appendChild(a);
   a.click();
-  URL.revokeObjectURL(url);
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 0);
 }
 
 async function parseOnMainThread(file) {
